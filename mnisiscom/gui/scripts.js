@@ -33,6 +33,22 @@ $( document ).ready(function() {
             $('#output-path-input').val(output_path);
           }
       }
+    
+    // Call into Python to get MCR dir selector
+    async function get_mcr_folder() {
+        var mcr_dir_path = await eel.get_mcr_folder()();
+          if (mcr_dir_path) {
+            if (mcr_dir_path === 'Invalid MCR folder.') {
+                $('#invalid-mcr-alert').fadeIn(800);
+            } else {
+                $('#mcr-path-input').val(mcr_dir_path);
+                $('#invalid-mcr-alert').fadeOut(800);
+            }
+          }
+      }
+    $('#mcr-path').click(function(){
+        get_mcr_folder();
+    });
 
     // Call into Python to get nii file selector
     async function get_nii_file(selector) {

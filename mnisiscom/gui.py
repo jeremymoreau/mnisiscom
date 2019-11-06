@@ -28,6 +28,20 @@ def get_folder():
     return folder_path
 
 @eel.expose
+def get_mcr_folder():
+    root = Tk()
+    root.withdraw()
+    root.wm_attributes('-topmost', 1)
+    folder_path = filedialog.askdirectory()
+
+    # Check if valid MCR folder is selected
+    folder_content = os.listdir(folder_path)
+    if 'mcr' in folder_content:
+        return folder_path
+    else:
+        return 'Invalid MCR folder.'
+
+@eel.expose
 def get_spm_bin():
     root = Tk()
     root.withdraw()
