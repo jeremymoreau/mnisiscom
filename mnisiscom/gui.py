@@ -73,6 +73,4 @@ def load_settings():
             return 'no settings'
 
 
-cwd = Path.cwd()
-main_gui_path = os.path.join(cwd, 'gui', 'main.html')
-eel.start(main_gui_path, mode='chrome', size=(1000, 700))
+eel.start('main.html', mode='chrome', size=(1000, 700))
