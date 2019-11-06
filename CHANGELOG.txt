@@ -1,0 +1,11 @@
+0.1.0
+- Initial release
+
+0.2.0
+- Fixed a bug that would cause z-scoring to fail when input NIfTI images contained NaNs.
+- Fixed a bug that would sometimes cause MRI panels to have white lines in the background.
+- Added --skipcoreg option
+
+0.3.0
+- Package scripts for pypi
+- Refactoring

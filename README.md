@@ -1,0 +1,1 @@
+Note: On Windows you may need to install Visual Studio C++. See this question for more information: https://stackoverflow.com/questions/29846087/microsoft-visual-c-14-0-is-required-unable-to-find-vcvarsall-bat

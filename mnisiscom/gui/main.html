@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <title>MNI SISCOM (For research use only!)</title>
+      <script type='text/javascript' src='/eel.js'></script>
+      <script src="/assets/vendor/jquery/jquery.min.js"></script>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Icons -->
+    <link href="/assets/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Theme CSS -->
+    <link type="text/css" href="/assets/css/argon.min.css" rel="stylesheet">
+    <!-- Core -->
+    <script src="/assets/vendor/popper/popper.min.js"></script>
+    <script src="/assets/vendor/bootstrap/bootstrap.min.js"></script>
+    <script src="/assets/vendor/nouislider/js/nouislider.min.js"></script>
+
+    <!-- Theme JS -->
+    <script src="/assets/js/argon.min.js"></script>
+
+    <!-- Custom -->
+    <link rel="stylesheet" href="/style.css"/>
+    <script src="/sliders.js"></script>
+    <script src="/scripts.js"></script>
+  </head>
+
+  <body>
+    <!-- Main container -->
+    <div class="container-fluid px-4">
+
+      <!-- Header contrainer -->
+      <div class="container-fluid">
+        <!-- Title -->
+        <div id="container-fluid">
+          <div class="row">
+            <div class="col-6 mt-3 mb-1 pl-0">
+              <span class="float-left"><h5>MNI SISCOM</h5></span>
+            </div>
+
+            <div class="col-6 text-right mt-3 mb-1 pr-0">
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#settings_modal">
+                    <i class="fa fa-cog"></i><span class="ml-2">Settings</span>
+                  </button>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Settings modal -->
+        <div class="modal fade" id="settings_modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Settings</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12 mb-3">
+
+                      <div class="input-group">
+                          <input type="text" class="form-control" placeholder="Select SPM12 standalone installation path" id="spm-path-input">
+                          <div class="input-group-append">
+                            <button class="btn btn-outline-primary" type="button" id="spm-path">Browse</button>
+                          </div>
+                      </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary" data-dismiss="modal" id="save-settings">Save changes</button>
+                </div>
+              </div>
+            </div>
+        </div>
+        <!-- Settings modal -->
+      </div>
+      <!-- Header contrainer -->
+
+      <!-- File input fields -->
+      <!-- First row -->
+      <div class="row">
+
+          <div class="col-md-6 mb-3">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Choose T1 MRI file (.nii)" id="t1-mri-input">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-primary" type="button" id="t1-mri">Browse</button>
+                </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Choose interictal SPECT file (.nii)" id="interictal-spect-input">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-primary" type="button" id="interictal-spect">Browse</button>
+                </div>
+            </div>
+          </div>
+
+      </div>
+
+      <!-- Second row -->
+      <div class="row">
+
+          <div class="col-md-6 mb-3">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Choose ictal SPECT file (.nii)" id="ictal-spect-input">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-primary" type="button" id="ictal-spect">Browse</button>
+                </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+              <div class="input-group">
+                  <input type="text" class="form-control" placeholder="Choose output folder" id="output-path-input">
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-primary" type="button" id="output-path">Browse</button>
+                  </div>
+              </div>
+            </div>
+
+      </div>
+      <!-- File input fields -->
+
+      <!-- SISCOM options -->
+      <div class="card">
+        <!-- Card-header -->
+        <div class="card-header">
+          <div class="row">
+            <div class="col-md-9">
+              <h5>Options</h5>
+            </div>
+
+            <div class="col-md-3">
+              <div class="custom-control custom-checkbox pt-1">
+                <input class="custom-control-input" id="skip-coreg" type="checkbox">
+                <label class="custom-control-label" for="skip-coreg">
+                  <span>Skip coregistration</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Card-header -->
+        <div class="card-body">
+          <div class="row">
+              <div class="col-md-6 mb-1">
+                <label for="siscom-threshold"  id="siscom-threshold-label">SISCOM threshold (0.5)</label>
+                <div id="siscom-threshold"></div>
+              </div>
+      
+              <div class="col-md-6 mb-1">
+                <label for="mask-threshold" id="mask-threshold-label">Mask threshold (0.6)</label>
+                <div id="mask-threshold"></div>
+              </div>
+          </div>
+        </div>
+      </div>
+      <!-- SISCOM options -->
+
+      <!-- Output options -->
+      <div class="card mt-3">
+          <!-- Card-header -->
+          <div class="card-header">
+            <div class="row">
+              <div class="col-md-6">
+                <h5>Output images</h5>
+              </div>
+
+              <div class="col-md-3">
+                  <div class="custom-control custom-checkbox pt-1">
+                    <input class="custom-control-input" id="mri-panel" type="checkbox" checked="">
+                    <label class="custom-control-label" for="mri-panel">
+                      <span>MRI panel</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="custom-control custom-checkbox pt-1">
+                      <input class="custom-control-input" id="glass-brain" type="checkbox" checked="">
+                      <label class="custom-control-label" for="glass-brain">
+                        <span>Glass brain image</span>
+                      </label>
+                    </div>
+                  </div>
+
+            </div>
+          </div>
+          <!-- Card-header -->
+
+          <!-- Card-body-->
+          <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-1">
+                  <label for="slice-thickness-slider" id="slice-thickness-label">Slice thickness in voxels (5)</label>
+                  <div id="slice-thickness-slider"></div>
+                </div>
+        
+                <div class="col-md-6 mb-1">
+                  <label for="transparency-slider" id="transparency-slider-label">Overlay transparency (0.8)</label>
+                  <div id="transparency-slider"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-1">
+                  <label for="mri-window-slider" id="mri-window-label">MRI Window (0.1 - 0.9)</label>
+                  <div id="mri-window-slider"></div>
+                </div>
+
+                <div class="col-md-4 mb-1">
+                  <label for="spect-window-slider" id="spect-window-label">SPECT Window (0 - 4.5 stdev)</label>
+                  <div id="spect-window-slider"></div>
+                </div>
+
+                <div class="col-md-4 mb-1">
+                  <label for="siscom-window-slider" id="siscom-window-label">SISCOM Window (0 - 2 stdev)</label>
+                  <div id="siscom-window-slider"></div>
+                </div>
+
+            </div>
+          </div>
+          <!-- Card-body-->
+      </div>
+      <!-- Output options -->
+
+      <div class="row">
+          <div class="col-md-12 mb-1 center-block text-center pt-3">
+          <button type="button" class="btn btn-primary">Compute</button>
+          </div>
+      </div>
+
+
+    </div>
+    <!-- Main container -->
+  </body>
+</html>
