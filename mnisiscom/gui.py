@@ -68,9 +68,9 @@ def load_settings():
             spm12_path = settings['spm12_path']
             return spm12_path
         else:
-            return 'no settings'
+            return 'Select SPM12 standalone installation path'
     else:
-            return 'no settings'
+            return 'Select SPM12 standalone installation path'
 
 
 eel.start('main.html', mode='chrome', size=(1000, 700))
