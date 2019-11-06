@@ -42,8 +42,8 @@ def get_spm_bin():
     return spm12_path
 
 @eel.expose
-def save_settings(spm12_path):
-    settings = {'spm12_path': spm12_path}
+def save_settings(spm12_path, mcr_path):
+    settings = {'spm12_path': spm12_path, 'mcr_path': mcr_path}
 
     home_dir = str(Path.home())
     settings_dir = os.path.join(home_dir, '.mnisiscom')
@@ -64,13 +64,14 @@ def load_settings():
     if os.path.isfile(settings_file):
         with open(settings_file, 'r') as f:
             settings = json.load(f)
-        if 'spm12_path' in settings:
+        if 'spm12_path' in settings and 'mcr_path' in settings:
             spm12_path = settings['spm12_path']
-            return spm12_path
+            mcr_path = settings['mcr_path']
+            return (spm12_path, mcr_path)
         else:
-            return 'Select SPM12 standalone installation path'
+            return ''
     else:
-            return 'Select SPM12 standalone installation path'
+            return ''
 
 
 eel.start('main.html', mode='chrome', size=(1000, 700))

@@ -6,20 +6,24 @@ $( document ).ready(function() {
 
     // Call into Python to load settings file (if it exists)
     async function load_settings() {
-        var spm12_path = await eel.load_settings()();
-        if (spm12_path) {
+        var mnisiscom_settings = await eel.load_settings()();
+        if (mnisiscom_settings) {
+            var spm12_path = mnisiscom_settings[0]
+            var mcr_path = mnisiscom_settings[1]
             $('#spm-path-input').val(spm12_path);
+            $('#mcr-path-input').val(mcr_path);
         }
     }
     load_settings()
 
     // Call into Python to save settings
-    async function save_settings(spm12_path) {
-        eel.save_settings(spm12_path)();
+    async function save_settings(spm12_path, mcr_path) {
+        eel.save_settings(spm12_path, mcr_path)();
     }
     $('#save-settings').click(function(){
         var spm12_path = $('#spm-path-input').val();
-        save_settings(spm12_path)
+        var mcr_path = $('#mcr-path-input').val();
+        save_settings(spm12_path, mcr_path)
     });
 
     // Call into Python to get dir selector
