@@ -1,3 +1,7 @@
+#mcr-input-group {
+    display: none;
+}
+
 .card-header {
     padding-top: 10px;
     padding-bottom: 10px;

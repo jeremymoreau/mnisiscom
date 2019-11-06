@@ -1,4 +1,9 @@
 $( document ).ready(function() {
+    // Show #mcr-input-group on Linux/Mac only
+    if (! navigator.platform.includes('Win')) {
+        $("#mcr-input-group").show();
+    }
+
     // Call into Python to load settings file (if it exists)
     async function load_settings() {
         var spm12_path = await eel.load_settings()();

@@ -60,6 +60,7 @@
                   </button>
                 </div>
                 <div class="modal-body">
+
                     <div class="col-md-12 mb-2">
                       <label for="spm-path-input">SPM12 standalone installation path</label>
                       <div class="input-group">
@@ -68,8 +69,18 @@
                             <button class="btn btn-outline-primary" type="button" id="spm-path">Browse</button>
                           </div>
                       </div>
-
                     </div>
+
+                    <div class="col-md-12 mb-2" id="mcr-input-group">
+                      <label for="mcr-path-input">MATLAB Compiler Runtime installation path</label>
+                      <div class="input-group">
+                          <input type="text" class="form-control" id="mcr-path-input" placeholder="Select MATLAB Compiler Runtime installation path">
+                          <div class="input-group-append">
+                            <button class="btn btn-outline-primary" type="button" id="mcr-path">Browse</button>
+                          </div>
+                      </div>
+                    </div>
+
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
