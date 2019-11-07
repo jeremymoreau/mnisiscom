@@ -145,7 +145,75 @@ def spm_coregister(target, sources, spm12_path, mcr_path):
 
         # remove SPM batch file
         os.remove(spm_batch_file)
-            
+
+def spm_normalise(source, apply_to, spm12_path, mcr_path):
+    """Wraps SPM's spm.tools.oldnorm
+
+    Normalised files are saved into the same dir as `source` and filename is prefixed with 'w'.
+
+    Parameters
+    ----------
+    source : str
+        Absolute path of target nii file
+    apply_to : list of str
+        Absolute paths of source nii files to coregister to target
+    spm12_path : str
+        Absolute path of SPM12 standalone binary (.sh or .exe)
+    mcr_path : str
+        Absolute path of Matlab Compiler Runtime (packaged with SPM12 standalone). May be an empty string on Windows systems.
+    Returns
+    -------
+        None
+    """
+    mni152_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'MNI152_T1.nii')
+
+    # SPM batch script template
+    spm_norm_batch = """
+    matlabbatch{{1}}.spm.tools.oldnorm.estwrite.subj.source = {{'{source},1'}};
+    matlabbatch{{1}}.spm.tools.oldnorm.estwrite.subj.wtsrc = '';
+    matlabbatch{{1}}.spm.tools.oldnorm.estwrite.subj.resample = {{'{apply_to},1'}};
+    matlabbatch{{1}}.spm.tools.oldnorm.estwrite.eoptions.template = {{'{mni152},1'}};
+    matlabbatch{{1}}.spm.tools.oldnorm.estwrite.eoptions.weight = '';
+    matlabbatch{{1}}.spm.tools.oldnorm.estwrite.eoptions.smosrc = 8;
+    matlabbatch{{1}}.spm.tools.oldnorm.estwrite.eoptions.smoref = 0;
+    matlabbatch{{1}}.spm.tools.oldnorm.estwrite.eoptions.regtype = 'mni';
+    matlabbatch{{1}}.spm.tools.oldnorm.estwrite.eoptions.cutoff = 25;
+    matlabbatch{{1}}.spm.tools.oldnorm.estwrite.eoptions.nits = 16;
+    matlabbatch{{1}}.spm.tools.oldnorm.estwrite.eoptions.reg = 1;
+    matlabbatch{{1}}.spm.tools.oldnorm.estwrite.roptions.preserve = 0;
+    matlabbatch{{1}}.spm.tools.oldnorm.estwrite.roptions.bb = [-78 -112 -70
+                                                            78 76 85];
+    matlabbatch{{1}}.spm.tools.oldnorm.estwrite.roptions.vox = [2 2 2];
+    matlabbatch{{1}}.spm.tools.oldnorm.estwrite.roptions.interp = 1;
+    matlabbatch{{1}}.spm.tools.oldnorm.estwrite.roptions.wrap = [0 0 0];
+    matlabbatch{{1}}.spm.tools.oldnorm.estwrite.roptions.prefix = 'w';
+    """
+
+    if source.endswith('.gz'):
+        source = ungzip(source)
+
+    if apply_to.endswith('.gz'):
+        apply_to = ungzip(apply_to)
+
+    # Create SPM batch file
+    spm_batch_file = os.path.join(os.path.dirname(source), 'spm_normalise_batch.m')
+    with open(spm_batch_file, 'w') as batch_file:
+        batch_file.write(spm_norm_batch.format(source=source, apply_to=apply_to, mni152=mni152_path))
+
+    # Run SPM batch file (Don't include MCR path if using Windows .exe)
+    if spm12_path.endswith('.exe'):
+        if os.path.isfile(spm12_path) and os.path.isfile(spm_batch_file):
+            command = [spm12_path, 'batch', spm_batch_file] 
+    else:
+        if os.path.isfile(spm12_path) and os.path.isdir(mcr_path) and os.path.isfile(spm_batch_file):
+            command = [spm12_path, mcr_path, 'batch', spm_batch_file]
+    subprocess.run(command)
+
+    # remove SPM batch file
+    os.remove(spm_batch_file)
+
+spm_normalise('/export02/data/jeremy/projects/jtm_siscom/test4/T1.nii', '/export02/data/jeremy/projects/jtm_siscom/test4/ictal.nii', 
+'/export01/data/jeremy/bin/spm12_standalone/run_spm12.sh', '/export01/data/jeremy/bin/v95')            
 
 def compute_siscom(interictal_nii, ictal_nii, out_dir, threshold=0.5, mask_cutoff=0.6):
     """Given coregistered interictal/ictal nii images, compute SISCOM
