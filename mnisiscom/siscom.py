@@ -12,7 +12,7 @@ with warnings.catch_warnings():  # ignore DeprecationWarning for joblib
     import sklearn
 import numpy as np
 import nibabel as nib
-from nipype.interfaces import spm
+import subprocess
 from nilearn import plotting
 from nilearn import masking
 from contextlib import contextmanager
@@ -89,8 +89,8 @@ def load_RAS_orient(path_to_nii):
 
     return nii_RAS
 
-def spm_coregister(target, sources):
-    """Wraps nipype's spm.Coregister() interface
+def spm_coregister(target, sources, spm12_path, mcr_path):
+    """Wraps SPM's spm.spatial.coreg
 
     Coregistered files are saved into the same dir as `target` and filename is prefixed with 'r'.
 
@@ -100,34 +100,52 @@ def spm_coregister(target, sources):
         Absolute path of target nii file
     sources : list of str
         Absolute paths of source nii files to coregister to target
+    spm12_path : str
+        Absolute path of SPM12 standalone binary (.sh or .exe)
+    mcr_path : str
+        Absolute path of Matlab Compiler Runtime (packaged with SPM12 standalone). May be an empty string on Windows systems.
     Returns
     -------
         None
     """
+    # SPM batch script template
+    spm_coreg_batch = """
+    matlabbatch{{1}}.spm.spatial.coreg.estwrite.ref = {{'{target}'}};
+    matlabbatch{{1}}.spm.spatial.coreg.estwrite.source = {{'{source}'}};
+    matlabbatch{{1}}.spm.spatial.coreg.estwrite.other = {{''}};
+    matlabbatch{{1}}.spm.spatial.coreg.estwrite.eoptions.cost_fun = 'nmi';
+    matlabbatch{{1}}.spm.spatial.coreg.estwrite.eoptions.sep = [4 2];
+    matlabbatch{{1}}.spm.spatial.coreg.estwrite.eoptions.tol = [0.02 0.02 0.02 0.001 0.001 0.001 0.01 0.01 0.01 0.001 0.001 0.001];
+    matlabbatch{{1}}.spm.spatial.coreg.estwrite.eoptions.fwhm = [7 7];
+    matlabbatch{{1}}.spm.spatial.coreg.estwrite.roptions.interp = 4;
+    matlabbatch{{1}}.spm.spatial.coreg.estwrite.roptions.wrap = [0 0 0];
+    matlabbatch{{1}}.spm.spatial.coreg.estwrite.roptions.mask = 0;
+    matlabbatch{{1}}.spm.spatial.coreg.estwrite.roptions.prefix = 'r';
+    """
+
     if target.endswith('.gz'):
         target = ungzip(target)
-    for source in sources:
+    for i, source in enumerate(sources):
         if source.endswith('.gz'):
             source = ungzip(source)
 
-        # Suppress output of spm.Coregister()...
-        # devnull = open(os.devnull,"w")
-        # oldstdout_fno = os.dup(sys.stdout.fileno())
-        # oldstderr_fno = os.dup(sys.stderr.fileno())
-        # os.dup2(devnull.fileno(), 1)
-        # os.dup2(devnull.fileno(), 2)
+        # Create SPM batch file
+        spm_batch_file = os.path.join(os.path.dirname(target), 'spm_coregister_batch' + str(i) + '.m')
+        with open(spm_batch_file, 'w') as batch_file:
+            batch_file.write(spm_coreg_batch.format(target=target, source=source))
 
-        coreg = spm.Coregister()
-        coreg.inputs.target = target
-        coreg.inputs.source = source
-        coreg.terminal_output = 'none'
-        coreg.run()
+        # Run SPM batch file (Don't include MCR path if using Windows .exe)
+        if spm12_path.endswith('.exe'):
+            if os.path.isfile(spm12_path) and os.path.isfile(spm_batch_file):
+                command = [spm12_path, 'batch', spm_batch_file] 
+        else:
+            if os.path.isfile(spm12_path) and os.path.isdir(mcr_path) and os.path.isfile(spm_batch_file):
+                command = [spm12_path, mcr_path, 'batch', spm_batch_file]
+        subprocess.run(command)
 
-        # Re-enable output to stdout/stderr
-        # os.dup2(oldstdout_fno, 1)
-        # os.dup2(oldstderr_fno, 2)
-        # devnull.close()
-
+        # remove SPM batch file
+        os.remove(spm_batch_file)
+            
 
 def compute_siscom(interictal_nii, ictal_nii, out_dir, threshold=0.5, mask_cutoff=0.6):
     """Given coregistered interictal/ictal nii images, compute SISCOM
