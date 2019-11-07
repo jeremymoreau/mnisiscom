@@ -146,6 +146,7 @@ def spm_coregister(target, sources, spm12_path, mcr_path):
         # remove SPM batch file
         os.remove(spm_batch_file)
 
+
 def spm_normalise(source, apply_to, spm12_path, mcr_path):
     """Wraps SPM's spm.tools.oldnorm
 
@@ -154,9 +155,10 @@ def spm_normalise(source, apply_to, spm12_path, mcr_path):
     Parameters
     ----------
     source : str
-        Absolute path of target nii file
-    apply_to : list of str
-        Absolute paths of source nii files to coregister to target
+        Absolute path of nii file to use as source (e.g. a T1 MRI)
+    apply_to : str
+        Absolute path of nii files (that are already coregistered with the source nii) on which to apply the transformation
+        from source -> MNI152
     spm12_path : str
         Absolute path of SPM12 standalone binary (.sh or .exe)
     mcr_path : str
@@ -211,9 +213,7 @@ def spm_normalise(source, apply_to, spm12_path, mcr_path):
 
     # remove SPM batch file
     os.remove(spm_batch_file)
-
-spm_normalise('/export02/data/jeremy/projects/jtm_siscom/test4/T1.nii', '/export02/data/jeremy/projects/jtm_siscom/test4/ictal.nii', 
-'/export01/data/jeremy/bin/spm12_standalone/run_spm12.sh', '/export01/data/jeremy/bin/v95')            
+         
 
 def compute_siscom(interictal_nii, ictal_nii, out_dir, threshold=0.5, mask_cutoff=0.6):
     """Given coregistered interictal/ictal nii images, compute SISCOM
@@ -527,7 +527,7 @@ def make_mri_panel(t1_nii, interictal_std_nii, ictal_std_nii, siscom_nii, mask_n
             new_img.save(os.path.join(results_dir, dir_label.upper() + '-' + slice_orientation + '_mri_slide.png'))
 
 
-def make_glass_brain(t1_nii, siscom_nii, out_dir):
+def make_glass_brain(t1_nii, siscom_nii, out_dir, spm12_path, mcr_path):
     """Plot a glass brain view of the SISCOM results
 
     Spatially normalises images into MNI space using spm.Normalize() prior to plotting
@@ -541,38 +541,16 @@ def make_glass_brain(t1_nii, siscom_nii, out_dir):
         Absolute path of SISCOM result nii (registered with T1)
     out_dir : str
         Absolute path of dir in which to save result files
-
+    spm12_path : str
+        Absolute path of SPM12 standalone binary (.sh or .exe)
+    mcr_path : str
+        Absolute path of Matlab Compiler Runtime (packaged with SPM12 standalone). May be an empty string on Windows systems.
     Returns
     -------
         None
 
-    """
-    # Ungzip for SPM, if needed
-    if t1_nii.endswith('.gz'):
-        t1_nii = ungzip(t1_nii)
-    if siscom_nii.endswith('.gz'):
-        siscom_nii = ungzip(siscom_nii)
-
-    # Spatially normalise SISCOM into MNI space
-    # Suppress output of spm.Normalize()...
-    devnull = open(os.devnull,"w")
-    oldstdout_fno = os.dup(sys.stdout.fileno())
-    oldstderr_fno = os.dup(sys.stderr.fileno())
-    os.dup2(devnull.fileno(), 1)
-    os.dup2(devnull.fileno(), 2)
-
-    norm = spm.Normalize()
-    norm.inputs.source =  t1_nii  # use T1 as source volume for coregistration
-    mni152_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'MNI152_T1.nii')
-    norm.inputs.template = mni152_path
-    norm.inputs.apply_to_files = siscom_nii  # apply same transformation to siscom volume
-    norm.terminal_output = 'none'
-    norm.run()
-
-    # Re-enable output to stdout/stderr
-    os.dup2(oldstdout_fno, 1)
-    os.dup2(oldstderr_fno, 2)
-    devnull.close()
+    """  
+    spm_normalise(t1_nii, siscom_nii, spm12_path, mcr_path)
 
     # Make results dirs
     results_dir = join(out_dir, 'SISCOM_results')
