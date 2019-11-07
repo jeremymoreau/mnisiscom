@@ -18,11 +18,15 @@
 
 .btn-outline-primary {
     color: #818181;
-    border-color: #D0D0D0;
+    border-color: #d0d0d0;
 }
 
 .modal-dialog {
     max-width: 80%;
+}
+
+.alert-danger {
+    background-color: #e03c3c;
 }
 
 /* Fix handle clipping */

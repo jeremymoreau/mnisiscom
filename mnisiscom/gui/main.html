@@ -54,7 +54,7 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">Settings</h5>
+                  <h5 class="modal-title"><i class="fa fa-cog"></i><span class="pl-3">Settings</span></h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
@@ -81,7 +81,7 @@
                       </div>
 
                       <div class="alert alert-danger mt-3" id="invalid-mcr-alert" role="alert">
-                          <span class="alert-inner--text"><strong>Warning!</strong>
+                          <span class="alert-inner--text"><strong>Error!</strong>
                              Invalid Matlab Compiler Runtime installation path selected. The selected folder name should start with "v" (e.g. v95) and contain a subfolder called "mcr".
                           </span>
                       </div>
@@ -194,8 +194,8 @@
 
               <div class="col-md-3">
                   <div class="custom-control custom-checkbox pt-1">
-                    <input class="custom-control-input" id="mri-panel" type="checkbox" checked="">
-                    <label class="custom-control-label" for="mri-panel">
+                    <input class="custom-control-input" id="mri-panel" type="checkbox" checked>
+                    <label class="custom-control-label" for="mri-panel"></label>
                       <span>MRI panel</span>
                     </label>
                   </div>
@@ -203,7 +203,7 @@
 
                 <div class="col-md-3">
                     <div class="custom-control custom-checkbox pt-1">
-                      <input class="custom-control-input" id="glass-brain" type="checkbox" checked="">
+                      <input class="custom-control-input" id="glass-brain" type="checkbox" checked>
                       <label class="custom-control-label" for="glass-brain">
                         <span>Glass brain image</span>
                       </label>
@@ -250,11 +250,33 @@
       </div>
       <!-- Output options -->
 
+      <!-- Compute button -->
       <div class="row">
           <div class="col-md-12 mb-1 center-block text-center pt-3">
-          <button type="button" class="btn btn-primary">Compute</button>
+          <button type="button" class="btn btn-primary" id="compute-button">Compute</button>
           </div>
       </div>
+
+      <!-- Missing params error modal -->
+      <div class="modal fade" id="error-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title"><i class="fa fa-exclamation-triangle"></i><span class="pl-3">Error!</span></h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+              <div class="modal-body" id="error-modal-body">
+
+              </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Missing params error modal -->
 
 
     </div>

@@ -91,4 +91,90 @@ $( document ).ready(function() {
         get_output_folder()
     });
 
+    // Run mnisiscom on click
+    $('#compute-button').click(function(){
+        // Get file paths
+        var t1_mri_path = $('#t1-mri-input').val()
+        var interictal_spect_path = $('#interictal-spect-input').val()
+        var ictal_spect_path = $('#ictal-spect-input').val()
+        var output_path = $('#output-path-input').val()
+
+        // Get checkbox values
+        var skip_coreg = $('#skip-coreg').is(':checked');
+        var mri_panel = $('#mri-panel').is(':checked');
+        var glass_brain = $('#glass-brain').is(':checked');
+
+        // Get settings
+        var spm12_path = $('#spm-path-input').val();
+        var mcr_path = $('#mcr-path-input').val();
+
+        // Save all params in a dict
+        param_dict = {
+            't1_mri_path': t1_mri_path,
+            'interictal_spect_path': interictal_spect_path,
+            'ictal_spect_path': ictal_spect_path,
+            'output_path': output_path,
+            'siscom_threshold': siscom_threshold,
+            'mask_threshold': mask_threshold,
+            'slice_thickness': slice_thickness,
+            'overlay_transparency': transparency,
+            'mri_window': mri_window,
+            'spect_window': spect_window,
+            'siscom_window': siscom_window,
+            'skip_coreg': skip_coreg,
+            'mri_panel': mri_panel,
+            'glass_brain': glass_brain,
+            'spm12_path': spm12_path,
+            'mcr_path': mcr_path
+        }
+
+        // Check that all required params have been inputted
+        // Get array of missing params
+        var missing_params_array = []
+        for (var key in param_dict){
+            var value = param_dict[key];
+
+            // Don't check for mcr_path on Windows
+            if ( navigator.platform.includes('Win') ) {
+                if ( key !== 'mcr_path') {
+                    // If no value set (exclude boolean checkboxes)
+                    if ( ! value && typeof value !== 'boolean') {
+                        missing_params_array.push(key)
+                    };
+                };
+
+            // Mac or Linux
+            } else {
+                // If no value set (exclude boolean checkboxes)
+                if ( ! value && typeof value !== 'boolean') {
+                    missing_params_array.push(key)
+                };
+            };
+
+          };
+        
+        // Display error message if there are any missing params
+        if ( missing_params_array.length !== 0) {
+            $('#error-modal-body').empty()  // Empty error modal in case it was previously called
+            $('#error-modal').modal('show');
+            for ( var missing_param_i in missing_params_array) {
+                var missing_param = missing_params_array[missing_param_i].replace(/_/g, ' ')
+                
+                $('#error-modal-body').append(
+                    `
+                    <div class="alert alert-danger" role="alert">
+                        <span class="alert-inner--text"><strong>Error!</strong><span class="ml-2">Please make sure to select a value for: <strong>${missing_param}</strong></span></span>
+                    </div>
+                    `
+                    );
+            };
+
+        // Compute results
+        } else {
+            // TODO: call mnisiscom
+            console.log('Run!')
+        };
+
+
+    });
 });
