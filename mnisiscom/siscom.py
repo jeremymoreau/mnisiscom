@@ -396,16 +396,19 @@ def make_mri_panel(t1_nii, interictal_std_nii, ictal_std_nii, siscom_nii, mask_n
 
     if slice_orientation == 'ax':
         nb_slices = ictal_std.shape[2]
-        xdim = ictal_std.shape[1]
-        ydim = ictal_std.shape[2]
+        ax_slice1 = np.fliplr(t1[:, :, 1].T)
+        xdim = ax_slice1.shape[0]
+        ydim = ax_slice1.shape[1]
     elif slice_orientation == 'cor':
         nb_slices = ictal_std.shape[1]
-        xdim = ictal_std.shape[0]
-        ydim = ictal_std.shape[2]
+        cor_slice1 = np.fliplr(t1[:, 1, :].T)
+        xdim = cor_slice1.shape[0]
+        ydim = cor_slice1.shape[1]
     elif slice_orientation == 'sag':
         nb_slices = ictal_std.shape[0]
-        xdim = ictal_std.shape[2]
-        ydim = ictal_std.shape[1]
+        sag_slice1 = np.fliplr(t1[1, :, :].T)
+        xdim = sag_slice1.shape[0]
+        ydim = sag_slice1.shape[1]
     else:
         raise ValueError("Valid options for slice_orientation are 'ax', 'cor', or 'sag'")
 
