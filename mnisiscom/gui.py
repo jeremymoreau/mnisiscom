@@ -88,4 +88,5 @@ def load_settings():
             return ''
 
 
-eel.start('main.html', mode='chrome', size=(1000, 700))
+if __name__ == '__main__':
+    eel.start('main.html', mode='chrome', size=(1000, 700))
