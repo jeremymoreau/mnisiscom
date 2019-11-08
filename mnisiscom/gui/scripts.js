@@ -177,4 +177,17 @@ $( document ).ready(function() {
 
 
     });
+
+    // Update progress bar
+    eel.expose(update_progress_bar);
+    function update_progress_bar(message, percentage) {
+        $('#progress-message').text(message)
+        $('#progress-bar').css('width', percentage + '%');
+        $('#progress-percentage').text(percentage + '%');
+    };
+
+});
+
+$( document ).ready(function() {
+    $('#progress-modal').modal('show');
 });
