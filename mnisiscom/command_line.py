@@ -8,7 +8,39 @@ from os.path import join
 import shutil
 from colorama import init, deinit
 from colorama import Fore, Back, Style
+from pathlib import Path
+import json
 
+def save_settings(spm12_path, mcr_path):
+    settings = {'spm12_path': spm12_path, 'mcr_path': mcr_path}
+
+    home_dir = str(Path.home())
+    settings_dir = os.path.join(home_dir, '.mnisiscom')
+
+    if not os.path.isdir(settings_dir):
+        os.mkdir(settings_dir)
+
+    settings_file = os.path.join(home_dir, '.mnisiscom', 'settings.json')
+
+    with open(settings_file, 'w') as f:
+        json.dump(settings, f)
+
+
+def load_settings():
+    home_dir = str(Path.home())
+    settings_file = os.path.join(home_dir, '.mnisiscom', 'settings.json')
+
+    if os.path.isfile(settings_file):
+        with open(settings_file, 'r') as f:
+            settings = json.load(f)
+        if 'spm12_path' in settings and 'mcr_path' in settings:
+            spm12_path = settings['spm12_path']
+            mcr_path = settings['mcr_path']
+            return (spm12_path, mcr_path)
+        else:
+            return ''
+    else:
+            return ''
 
 @click.command()
 @click.option('--t1', '-t1', type=click.Path(exists=True, dir_okay=False, resolve_path=True), required=True,
@@ -61,6 +93,27 @@ def run_siscom(t1, interictal, ictal, out, siscom_threshold, mask_threshold,
     """
     init()  # start colorama
 
+    # Prompt for SPM12 standalone and MCR installation path if not already in settings
+    settings = load_settings()
+    if settings == '':
+        if platform.system() == 'Windows':
+            spm12_path = click.prompt('Enter the SPM12 standalone installation path (e.g. /path/to/spm12_win64.exe)', type=click.Path(exists=True))
+            mcr_path = ''
+        else:
+            spm12_path = click.prompt('Enter the SPM12 standalone installation path (e.g. /path/to/run_spm12.sh)', type=click.Path(exists=True))
+            mcr_path_message = """
+            Enter the MATLAB Compiler Runtime installation path. The selected folder name should start with "v" (e.g. v95)
+             and contain a subfolder called "mcr"
+            """
+            mcr_path = click.prompt(mcr_path_message, type=click.Path(exists=True))
+
+        # Save settings
+        save_settings(spm12_path, mcr_path)
+
+    else:
+        spm12_path = settings[0]
+        mcr_path = settings[1]
+
     # Create output directory
     siscom_dir = join(out, 'SISCOM')
     file_suffix = 0
@@ -84,10 +137,10 @@ def run_siscom(t1, interictal, ictal, out, siscom_threshold, mask_threshold,
         # Coregister i/ii to t1, then coregister ri to rii (for better alignment)
         print(Fore.GREEN + 'Coregistering interictal/ictal SPECT images to T1 with SPM (~1-5 minutes)...')
         print(Style.RESET_ALL)
-        siscom.spm_coregister(t1_nii, [interictal_nii, ictal_nii])
+        siscom.spm_coregister(t1_nii, [interictal_nii, ictal_nii], spm12_path, mcr_path)
         rinterictal_nii = join(siscom_dir, 'r' + nii_basenames[1])
         rictal_nii = join(siscom_dir, 'r' + nii_basenames[2])
-        siscom.spm_coregister(rinterictal_nii, [rictal_nii])
+        siscom.spm_coregister(rinterictal_nii, [rictal_nii], spm12_path, mcr_path)
         rrictal_nii = join(siscom_dir, 'rr' + nii_basenames[2])
     else:
         rinterictal_nii = interictal_nii
@@ -125,7 +178,7 @@ def run_siscom(t1, interictal, ictal, out, siscom_threshold, mask_threshold,
     if glassbrain:
         print(Fore.GREEN + 'Plotting glass brain results (~30s-2 minutes)...')
         print(Style.RESET_ALL)
-        siscom.make_glass_brain(t1_nii, siscom_z, siscom_dir)
+        siscom.make_glass_brain(t1_nii, siscom_z, siscom_dir, spm12_path, mcr_path)
 
     print(Fore.GREEN + 'Done!')
     print(Style.RESET_ALL)
