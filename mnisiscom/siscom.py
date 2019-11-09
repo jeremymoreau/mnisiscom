@@ -46,6 +46,27 @@ def ungzip(gzipped_file):
     return ungzipped_file
 
 
+def gzip_file(file_to_gzip):
+    """gzip a file
+
+    Parameters
+    ----------
+    file_to_gzip : str
+        Absolute path of a gzipped file
+
+    Returns
+    -------
+    str
+        Absolute path of gzipped file
+    """
+    with open(file_to_gzip, 'rb') as f_in:
+        gzipped_file = file_to_gzip + '.gz'
+        with gzip.open(gzipped_file, 'wb') as f_out:
+            f_out.writelines(f_in)
+
+    return gzipped_file
+
+
 def reslice_iso(orig_img):
     """Reslice nifti image into isotropic 1x1x1 space
 
