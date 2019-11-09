@@ -565,3 +565,15 @@ def make_glass_brain(t1_nii, siscom_nii, out_dir, spm12_path, mcr_path):
         warnings.filterwarnings("ignore",category=DeprecationWarning)  # ignore scipy 'np.bool_' scalars... as index
         plotting.plot_glass_brain(join(out_dir, join(out_dir, 'wsiscom_z.nii')),
                                   colorbar=True).savefig(join(results_dir, 'SISCOM-glass_brain.png'))
+
+
+def create_output_dir(output_dir):
+    siscom_dir = join(output_dir, 'SISCOM')
+    file_suffix = 0
+    while os.path.exists(siscom_dir):
+        file_suffix += 1
+        siscom_dir = join(output_dir, 'SISCOM' + str(file_suffix))
+    if not os.path.exists(siscom_dir):
+        os.mkdir(siscom_dir)
+
+    return siscom_dir

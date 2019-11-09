@@ -1,4 +1,5 @@
 import click
+import platform
 import importlib
 import siscom
 importlib.reload(siscom)
@@ -115,13 +116,7 @@ def run_siscom(t1, interictal, ictal, out, siscom_threshold, mask_threshold,
         mcr_path = settings[1]
 
     # Create output directory
-    siscom_dir = join(out, 'SISCOM')
-    file_suffix = 0
-    while os.path.exists(siscom_dir):
-        file_suffix += 1
-        siscom_dir = join(out, 'SISCOM' + str(file_suffix))
-    if not os.path.exists(siscom_dir):
-        os.mkdir(siscom_dir)
+    siscom_dir = siscom.create_output_dir(out)
 
 
     # Copy original T1, interictal, and ictal volumes to siscom_dir

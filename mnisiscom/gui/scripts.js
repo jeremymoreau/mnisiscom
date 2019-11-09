@@ -66,6 +66,11 @@ $( document ).ready(function() {
           }
         }
 
+    // Call into Python to run mnisiscom
+    async function run_siscom(param_dict) {
+        var finished = await eel.run_siscom(param_dict)();
+        };
+
     // Get SPM12 path on click
     $('#spm-path').click(function(){
         get_spm_bin()
@@ -171,14 +176,14 @@ $( document ).ready(function() {
 
         // Compute results
         } else {
-            // TODO: call mnisiscom
-            console.log('Run!')
+            run_siscom(param_dict)
+            $('#progress-modal').modal('show');
         };
 
 
     });
 
-    // Update progress bar
+    // Update progress bar (from python)
     eel.expose(update_progress_bar);
     function update_progress_bar(message, percentage) {
         $('#progress-message').text(message)
@@ -186,8 +191,4 @@ $( document ).ready(function() {
         $('#progress-percentage').text(percentage + '%');
     };
 
-});
-
-$( document ).ready(function() {
-    $('#progress-modal').modal('show');
 });

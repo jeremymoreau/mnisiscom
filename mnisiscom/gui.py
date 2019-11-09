@@ -1,9 +1,16 @@
 import os
+from os.path import join
 import platform
 import random
 import json
+import shutil
 from pathlib import Path
 from tkinter import Tk, filedialog
+import siscom
+
+from colorama import init, deinit
+from colorama import Fore, Back, Style
+import subprocess
 
 import eel
 
@@ -87,6 +94,110 @@ def load_settings():
     else:
             return ''
 
+@eel.expose
+def run_siscom(param_dict):
+    init()  # start colorama
+
+    # Get param values
+    out = param_dict['output_path']
+    t1 = param_dict['t1_mri_path']
+    interictal = param_dict['interictal_spect_path']
+    ictal = param_dict['ictal_spect_path']
+    spm12_path = param_dict['spm12_path']
+    mcr_path = param_dict['mcr_path']
+
+    skipcoreg = param_dict['skip_coreg']
+    mripanel = param_dict['mri_panel']
+    glassbrain = param_dict['glass_brain']
+    
+    mripanel_t1window = tuple([float(x) for x in param_dict['mri_window']])
+    mripanel_spectwindow = tuple([float(x) for x in param_dict['spect_window']])
+    mripanel_siscomwindow = tuple([float(x) for x in param_dict['siscom_window']])
+
+    mripanel_thickness = int(float(param_dict['slice_thickness']))
+    mripanel_transparency = float(param_dict['overlay_transparency'])
+    siscom_threshold = float(param_dict['siscom_threshold'])
+    mask_threshold = float(param_dict['mask_threshold'])
+
+    # Create output directory
+    siscom_dir = siscom.create_output_dir(out)
+    
+    # Copy original T1, interictal, and ictal volumes to siscom_dir
+    nii_basenames = []
+    for nii in [t1, interictal, ictal]:
+        shutil.copy2(nii, siscom_dir)
+        nii_basenames.append(os.path.basename(nii))
+    t1_nii = join(siscom_dir, nii_basenames[0])
+    interictal_nii = join(siscom_dir, nii_basenames[1])
+    ictal_nii = join(siscom_dir, nii_basenames[2])
+
+    if not skipcoreg:
+        # Coregister i/ii to t1, then coregister ri to rii (for better alignment)
+        print(Fore.GREEN + 'Coregistering interictal/ictal SPECT images to T1 with SPM (~1-5 minutes)...')
+        print(Style.RESET_ALL)
+
+        eel.update_progress_bar('Coregistering images...', 10)
+        siscom.spm_coregister(t1_nii, [interictal_nii, ictal_nii], spm12_path, mcr_path)
+        
+        eel.update_progress_bar('Coregistering images...', 30)
+        rinterictal_nii = join(siscom_dir, 'r' + nii_basenames[1])
+        rictal_nii = join(siscom_dir, 'r' + nii_basenames[2])
+        siscom.spm_coregister(rinterictal_nii, [rictal_nii], spm12_path, mcr_path)
+
+
+        rrictal_nii = join(siscom_dir, 'rr' + nii_basenames[2])
+    else:
+        rinterictal_nii = interictal_nii
+        rrictal_nii = ictal_nii
+        t1_nii = t1
+
+    # Run SISCOM
+    eel.update_progress_bar('Computing SISCOM...', 50)
+    print(Fore.GREEN + 'Computing SISCOM images (~5-10s)...')
+    print(Style.RESET_ALL)
+    siscom.compute_siscom(rinterictal_nii, rrictal_nii, siscom_dir,
+                          threshold=siscom_threshold, mask_cutoff=mask_threshold)
+    
+
+    # Get paths of result nii files
+    interictal_z = join(siscom_dir, 'interictal_z.nii.gz')
+    ictal_z = join(siscom_dir, 'ictal_z.nii.gz')
+    siscom_z = join(siscom_dir, 'siscom_z.nii.gz')
+    mask = join(siscom_dir, 'interictal_mask.nii.gz')
+
+    # Make MRI panels
+    if mripanel:
+        eel.update_progress_bar('Plotting MRI panel results...', 70)
+        print(Fore.GREEN + 'Plotting MRI panel results (~10-30s)...')
+        print(Style.RESET_ALL)
+        # Create list of slice orientations if 'all' option is selected
+        panel_slices = ['ax', 'cor', 'sag']
+        for panel_slice in panel_slices:
+            siscom.make_mri_panel(t1_nii, interictal_z, ictal_z, siscom_z, mask, siscom_dir, slice_orientation=panel_slice,
+                                  slice_thickness=mripanel_thickness, alpha=mripanel_transparency,
+                                  panel_type='all', t1_window=mripanel_t1window,
+                                  spect_window=mripanel_spectwindow, siscom_window=mripanel_siscomwindow)
+
+    # Make glass brain
+    if glassbrain:
+        eel.update_progress_bar('Plotting glass brain results...', 80)
+        print(Fore.GREEN + 'Plotting glass brain results (~30s-2 minutes)...')
+        print(Style.RESET_ALL)
+        siscom.make_glass_brain(t1_nii, siscom_z, siscom_dir, spm12_path, mcr_path)
+
+    print(Fore.GREEN + 'Done!')
+    print(Style.RESET_ALL)
+    deinit()  # stop colorama
+
+    eel.update_progress_bar('Done!', 100)
+
+    # Open results folder
+    if platform.system() == 'Windows':
+        os.startfile(siscom_dir)
+    elif platform.system() == 'Darwin':
+        subprocess.run(['open', siscom_dir])
+    else:
+        subprocess.run(['xdg-open', siscom_dir])
 
 if __name__ == '__main__':
     eel.start('main.html', mode='chrome', size=(1000, 700))
