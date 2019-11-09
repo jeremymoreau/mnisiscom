@@ -6,6 +6,10 @@
     display: none;
 }
 
+#progress-complete {
+    display: none;
+}
+
 .card-header {
     padding-top: 10px;
     padding-bottom: 10px;

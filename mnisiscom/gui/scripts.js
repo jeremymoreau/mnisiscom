@@ -191,4 +191,12 @@ $( document ).ready(function() {
         $('#progress-percentage').text(percentage + '%');
     };
 
+    // Display Done! message (from python)
+    eel.expose(show_done_message);
+    function show_done_message() {
+        $('#progress-group').fadeOut(800, function() {
+            $('#progress-complete').fadeIn(800);
+        });
+    };
+
 });

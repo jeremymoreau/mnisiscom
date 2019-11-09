@@ -290,19 +290,23 @@
               </div>
                 <div class="modal-body" id="progress-modal-body">
 
-                  <div class="progress-wrapper">
-                      <div class="progress-info">
-                        <div class="progress-label">
-                          <span id="progress-message">Starting...</span>
-                        </div>
-                        <div class="progress-percentage">
-                          <span id="progress-percentage">0%</span>
-                        </div>
+                  <div class="progress-wrapper" id="progress-group">
+                    <div class="progress-info">
+                      <div class="progress-label">
+                        <span id="progress-message">Starting...</span>
                       </div>
-                      <div class="progress">
-                          <div class="progress-bar progress-bar-striped progress-bar-animated" id="progress-bar" role="progressbar"></div>
+                      <div class="progress-percentage">
+                        <span id="progress-percentage">0%</span>
                       </div>
                     </div>
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" id="progress-bar" role="progressbar"></div>
+                    </div>
+                  </div>
+
+                  <div class="alert alert-success" id="progress-complete" role="alert">
+                    <strong>Done!</strong> MNI SISCOM has finished running.
+                  </div>
 
                 </div>
               <div class="modal-footer">

@@ -167,7 +167,7 @@ def run_siscom(param_dict):
 
     # Make MRI panels
     if mripanel:
-        eel.update_progress_bar('Plotting MRI panel results...', 70)
+        eel.update_progress_bar('Plotting MRI panel results...', 60)
         print(Fore.GREEN + 'Plotting MRI panel results (~10-30s)...')
         print(Style.RESET_ALL)
         # Create list of slice orientations if 'all' option is selected
@@ -190,6 +190,7 @@ def run_siscom(param_dict):
     deinit()  # stop colorama
 
     eel.update_progress_bar('Done!', 100)
+    eel.show_done_message()
 
     # Open results folder
     if platform.system() == 'Windows':
