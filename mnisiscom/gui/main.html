@@ -159,7 +159,7 @@
             <div class="col-md-3">
               <div class="custom-control custom-checkbox pt-1">
                 <input class="custom-control-input" id="skip-coreg" type="checkbox">
-                <label class="custom-control-label" for="skip-coreg">
+                <label class="custom-control-label" for="skip-coreg" data-toggle="tooltip" data-placement="top" title="Whether or not to skip the first coregistration step. Input images MUST already be coregistered and have identical dimensions.">
                   <span>Skip coregistration</span>
                 </label>
               </div>
@@ -170,12 +170,16 @@
         <div class="card-body">
           <div class="row">
               <div class="col-md-6 mb-1">
-                <label for="siscom-threshold"  id="siscom-threshold-label">SISCOM threshold (0.5)</label>
+                <label for="siscom-threshold"  id="siscom-threshold-label" data-toggle="tooltip" data-placement="top" title="Threshold value between 0 and 1 below which to zero out SISCOM results (i.e. only display voxels where ictal (z-scored) - interictal (z-scored) > threshold). Default is 0.5">
+                  SISCOM threshold (0.5)
+                </label>
                 <div id="siscom-threshold"></div>
               </div>
       
               <div class="col-md-6 mb-1">
-                <label for="mask-threshold" id="mask-threshold-label">Mask threshold (0.6)</label>
+                <label for="mask-threshold" id="mask-threshold-label" data-toggle="tooltip" data-placement="top" title="Threshold value between 0 and 1 for generating the interictal SPECT brain mask. Look at the 'interictal_mask.nii.gz' output file to judge the quality of the mask. Decrease the value if the mask is too aggressive (i.e. cuts into brain parenchyma) and vice versa. Default is 0.6">
+                  Mask threshold (0.6)
+                </label>
                 <div id="mask-threshold"></div>
               </div>
           </div>
@@ -195,7 +199,7 @@
               <div class="col-md-3">
                   <div class="custom-control custom-checkbox pt-1">
                     <input class="custom-control-input" id="mri-panel" type="checkbox" checked>
-                    <label class="custom-control-label" for="mri-panel"></label>
+                    <label class="custom-control-label" for="mri-panel" data-toggle="tooltip" data-placement="top" title="Whether or not to plot SISCOM results as an MRI panel.">
                       <span>MRI panel</span>
                     </label>
                   </div>
@@ -204,7 +208,7 @@
                 <div class="col-md-3">
                     <div class="custom-control custom-checkbox pt-1">
                       <input class="custom-control-input" id="glass-brain" type="checkbox" checked>
-                      <label class="custom-control-label" for="glass-brain">
+                      <label class="custom-control-label" for="glass-brain" data-toggle="tooltip" data-placement="top" title="Whether or not to plot SISCOM results in a glass brain (MIP) view. This will also generate a SISCOM results volume in standard MNI152 space, 'siscom_z_MNI152.nii.gz'.">
                         <span>Glass brain image</span>
                       </label>
                     </div>
@@ -218,29 +222,39 @@
           <div class="card-body">
             <div class="row">
                 <div class="col-md-6 mb-1">
-                  <label for="slice-thickness-slider" id="slice-thickness-label">Slice thickness in voxels (5)</label>
+                  <label for="slice-thickness-slider" id="slice-thickness-label" data-toggle="tooltip" data-placement="top" title="Thickness of slices (in voxels) for MRI panel. Default is 5">
+                    Slice thickness in voxels (5)
+                  </label>
                   <div id="slice-thickness-slider"></div>
                 </div>
         
                 <div class="col-md-6 mb-1">
-                  <label for="transparency-slider" id="transparency-slider-label">Overlay transparency (0.8)</label>
+                  <label for="transparency-slider" id="transparency-slider-label" data-toggle="tooltip" data-placement="top" title="Transparency value from 0 to 1 for interictal/ictal/SISCOM overlay layers. Default is 0.8 (80%)">
+                    Overlay transparency (0.8)
+                  </label>
                   <div id="transparency-slider"></div>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-4 mb-1">
-                  <label for="mri-window-slider" id="mri-window-label">MRI Window (0.1 - 0.9)</label>
+                  <label for="mri-window-slider" id="mri-window-label" data-toggle="tooltip" data-placement="top" title="Scaling factor for min and max values of T1 MRI (0 to 1). Default values are 0.1 - 0.9">
+                    MRI Window (0.1 - 0.9)
+                  </label>
                   <div id="mri-window-slider"></div>
                 </div>
 
                 <div class="col-md-4 mb-1">
-                  <label for="spect-window-slider" id="spect-window-label">SPECT Window (0 - 4.5 stdev)</label>
+                  <label for="spect-window-slider" id="spect-window-label" data-toggle="tooltip" data-placement="top" title="Min and max values for standardised SPECT images (standard deviations). Default values are 0 - 4.5">
+                    SPECT Window (0 - 4.5 stdev)
+                  </label>
                   <div id="spect-window-slider"></div>
                 </div>
 
                 <div class="col-md-4 mb-1">
-                  <label for="siscom-window-slider" id="siscom-window-label">SISCOM Window (0 - 2 stdev)</label>
+                  <label for="siscom-window-slider" id="siscom-window-label" data-toggle="tooltip" data-placement="top" title="Min and max values for SISCOM image (difference of standard deviations). Default values are 0 - 2">
+                    SISCOM Window (0 - 2 stdev)
+                  </label>
                   <div id="siscom-window-slider"></div>
                 </div>
 

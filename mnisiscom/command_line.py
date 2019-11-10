@@ -56,7 +56,7 @@ def load_settings():
               help='Directory in which to save SISCOM results')
 @click.option('--siscom-threshold', type=float, default=0.5,
               help='Threshold value between 0 and 1 below which to zero out SISCOM results '
-              '(i.e. Only display voxels where ictal (z-scored) - interictal (z-scored) > threshold). Default is 0.5')
+              '(i.e. only display voxels where ictal (z-scored) - interictal (z-scored) > threshold). Default is 0.5')
 @click.option('--mask-threshold', type=float, default=0.6,
               help='Threshold value between 0 and 1 for generating the interictal SPECT brain mask. Look at the '
                    '"interictal_mask.nii.gz" output file to judge the quality of the mask. Decrease the value '
@@ -73,7 +73,7 @@ def load_settings():
 @click.option('--mripanel-thickness', type=int, default=5,
               help='Thickness of slices (in voxels) for MRI panel. Default is 5')
 @click.option('--mripanel-transparency', type=float, default=0.8,
-              help='Transparency value from 0 to 1 for interictal/ictal/SISCOM overlay layer. Default is 0.8 (80%)')
+              help='Transparency value from 0 to 1 for interictal/ictal/SISCOM overlay layers. Default is 0.8 (80%)')
 @click.option('--mripanel-t1window', type=(float, float), default=(0.2, 0.9),
               help='Scaling factor for min and max values of T1 MRI (0 to 1). Default values are 0.1 0.9')
 @click.option('--mripanel-spectwindow', type=(float, float), default=(0, 4.5),
@@ -81,7 +81,8 @@ def load_settings():
 @click.option('--mripanel-siscomwindow', type=(float, float), default=(0, 2),
               help='Min and max values for SISCOM image (difference of standard deviations). Default values are 0 2')
 @click.option('--glassbrain/--no-glassbrain', default=True,
-              help='Whether or not to plot SISCOM results as glass brain (MIP). Default is "--glassbrain"')
+              help='Whether or not to plot SISCOM results in a glass brain (MIP) view. This will also generate a SISCOM '
+                   'results volume in standard MNI152 space, "siscom_z_MNI152.nii.gz". Default is "--glassbrain"')
 @click.option('--skipcoreg/--no-skipcoreg', default=False,
               help='Whether or not to skip the first coregistration step. Input images MUST already be coregistered and '
                    'have identical dimensions. Default is "--no-skipcoreg"')
