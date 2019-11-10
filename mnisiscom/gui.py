@@ -7,23 +7,24 @@ import shutil
 from pathlib import Path
 from tkinter import Tk, filedialog
 import siscom
-
 from colorama import init, deinit
 from colorama import Fore, Back, Style
 import subprocess
-
 import eel
 
 eel.init('gui')
+
 
 @eel.expose
 def get_nii_file():
     root = Tk()
     root.withdraw()
     root.wm_attributes('-topmost', 1)
-    file_path =  filedialog.askopenfilename(title = "Select file", filetypes=[("NIfTI Files", "*.nii")])
-    
+    file_path = filedialog.askopenfilename(
+        title="Select file", filetypes=[("NIfTI Files", "*.nii")])
+
     return file_path
+
 
 @eel.expose
 def get_folder():
@@ -31,8 +32,9 @@ def get_folder():
     root.withdraw()
     root.wm_attributes('-topmost', 1)
     folder_path = filedialog.askdirectory()
-    
+
     return folder_path
+
 
 @eel.expose
 def get_mcr_folder():
@@ -48,6 +50,7 @@ def get_mcr_folder():
     else:
         return 'Invalid MCR folder.'
 
+
 @eel.expose
 def get_spm_bin():
     root = Tk()
@@ -55,12 +58,14 @@ def get_spm_bin():
     root.wm_attributes('-topmost', 1)
     spm12_path = ''
     if platform.system() == 'Windows':
-        spm12_path =  filedialog.askopenfilename(title = "Select SPM12", filetypes=[("SPM12", "spm12_win64.exe")])
+        spm12_path = filedialog.askopenfilename(title="Select SPM12", filetypes=[
+                                                ("SPM12", "spm12_win64.exe")])
     else:
-        spm12_path =  filedialog.askopenfilename(title = "Select SPM12", filetypes=[("SPM12", "run_spm12.sh")])
+        spm12_path = filedialog.askopenfilename(
+            title="Select SPM12", filetypes=[("SPM12", "run_spm12.sh")])
 
-    
     return spm12_path
+
 
 @eel.expose
 def save_settings(spm12_path, mcr_path):
@@ -77,6 +82,7 @@ def save_settings(spm12_path, mcr_path):
     with open(settings_file, 'w') as f:
         json.dump(settings, f)
 
+
 @eel.expose
 def load_settings():
     home_dir = str(Path.home())
@@ -92,7 +98,8 @@ def load_settings():
         else:
             return ''
     else:
-            return ''
+        return ''
+
 
 @eel.expose
 def run_siscom(param_dict):
@@ -109,10 +116,12 @@ def run_siscom(param_dict):
     skipcoreg = param_dict['skip_coreg']
     mripanel = param_dict['mri_panel']
     glassbrain = param_dict['glass_brain']
-    
+
     mripanel_t1window = tuple([float(x) for x in param_dict['mri_window']])
-    mripanel_spectwindow = tuple([float(x) for x in param_dict['spect_window']])
-    mripanel_siscomwindow = tuple([float(x) for x in param_dict['siscom_window']])
+    mripanel_spectwindow = tuple([float(x)
+                                  for x in param_dict['spect_window']])
+    mripanel_siscomwindow = tuple([float(x)
+                                   for x in param_dict['siscom_window']])
 
     mripanel_thickness = int(float(param_dict['slice_thickness']))
     mripanel_transparency = float(param_dict['overlay_transparency'])
@@ -121,11 +130,14 @@ def run_siscom(param_dict):
 
     # Create output directory
     siscom_dir = siscom.create_output_dir(out)
-    
+
     # Copy original T1, interictal, and ictal volumes to siscom_dir
-    t1_nii = shutil.copy(t1, join(siscom_dir, 'T1' + ''.join(Path(t1).suffixes)))
-    interictal_nii = shutil.copy(interictal, join(siscom_dir, 'interictal' + ''.join(Path(interictal).suffixes)))
-    ictal_nii = shutil.copy(ictal, join(siscom_dir, 'ictal' + ''.join(Path(ictal).suffixes)))
+    t1_nii = shutil.copy(
+        t1, join(siscom_dir, 'T1' + ''.join(Path(t1).suffixes)))
+    interictal_nii = shutil.copy(interictal, join(
+        siscom_dir, 'interictal' + ''.join(Path(interictal).suffixes)))
+    ictal_nii = shutil.copy(ictal, join(
+        siscom_dir, 'ictal' + ''.join(Path(ictal).suffixes)))
 
     if not skipcoreg:
         # Coregister i/ii to t1, then coregister ri to rii (for better alignment)
@@ -133,13 +145,14 @@ def run_siscom(param_dict):
         print(Style.RESET_ALL)
 
         eel.update_progress_bar('Coregistering images...', 0)
-        siscom.spm_coregister(t1_nii, [interictal_nii, ictal_nii], spm12_path, mcr_path)
-        
+        siscom.spm_coregister(
+            t1_nii, [interictal_nii, ictal_nii], spm12_path, mcr_path)
+
         eel.update_progress_bar('Coregistering images...', 20)
         rinterictal_nii = join(siscom_dir, 'rinterictal.nii')
         rictal_nii = join(siscom_dir, 'rictal.nii')
-        siscom.spm_coregister(rinterictal_nii, [rictal_nii], spm12_path, mcr_path)
-
+        siscom.spm_coregister(
+            rinterictal_nii, [rictal_nii], spm12_path, mcr_path)
 
         rrictal_nii = join(siscom_dir, 'rrictal.nii')
     else:
@@ -153,7 +166,6 @@ def run_siscom(param_dict):
     print(Style.RESET_ALL)
     siscom.compute_siscom(rinterictal_nii, rrictal_nii, siscom_dir,
                           threshold=siscom_threshold, mask_cutoff=mask_threshold)
-    
 
     # Get paths of result nii files
     interictal_z = join(siscom_dir, 'interictal_z.nii.gz')
@@ -179,11 +191,12 @@ def run_siscom(param_dict):
         eel.update_progress_bar('Plotting glass brain results...', 70)
         print(Fore.GREEN + 'Plotting glass brain results (~30s-2 minutes)...')
         print(Style.RESET_ALL)
-        siscom.make_glass_brain(t1_nii, siscom_z, siscom_dir, spm12_path, mcr_path)
+        siscom.make_glass_brain(
+            t1_nii, siscom_z, siscom_dir, spm12_path, mcr_path)
 
     print(Fore.GREEN + 'Done!')
     print(Style.RESET_ALL)
-    
+
     # Clean output dir
     eel.update_progress_bar('Cleaning up...', 90)
     print(Fore.GREEN + 'Cleaning up result files... (~30s)')
@@ -202,6 +215,7 @@ def run_siscom(param_dict):
         subprocess.run(['open', siscom_dir])
     else:
         subprocess.run(['xdg-open', siscom_dir])
+
 
 if __name__ == '__main__':
     eel.start('main.html', mode='chrome', size=(1000, 700))
