@@ -177,9 +177,11 @@ $( document ).ready(function() {
         // Compute results
         } else {
             run_siscom(param_dict)
-            $('#progress-modal').modal('show');
+            $('#progress-modal').modal({
+                backdrop: 'static',
+                keyboard: false
+                },'show');
         };
-
 
     });
 
@@ -191,12 +193,24 @@ $( document ).ready(function() {
         $('#progress-percentage').text(percentage + '%');
     };
 
-    // Display Done! message (from python)
+    // Display Done! message and enable closing progress-modal (from python)
     eel.expose(show_done_message);
     function show_done_message() {
         $('#progress-group').fadeOut(800, function() {
-            $('#progress-complete').fadeIn(800);
+            $('#progress-complete').fadeIn(800, function() {
+                $('#progress-modal-close-button').fadeTo(800, 1);
+                $('#progress-modal-dismiss-button').removeAttr('disabled');
+            });
         });
     };
+
+    // Reset progress-modal on close
+    $('#progress-modal').on('hidden.bs.modal', function (e) {
+        $('#progress-complete').hide(function() {
+            $('#progress-group').show();
+            $('#progress-modal-close-button').hide();
+            $('#progress-modal-dismiss-button').attr('disabled', true);
+        });
+      })
 
 });
