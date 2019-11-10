@@ -139,7 +139,7 @@ def run_siscom(t1, interictal, ictal, out, siscom_threshold, mask_threshold,
         t1_nii = t1
 
     # Run SISCOM
-    print(Fore.GREEN + 'Computing SISCOM images (~5-10s)...')
+    print(Fore.GREEN + 'Computing SISCOM images (~5-30s)...')
     print(Style.RESET_ALL)
     siscom.compute_siscom(rinterictal_nii, rrictal_nii, siscom_dir,
                           threshold=siscom_threshold, mask_cutoff=mask_threshold)
@@ -152,7 +152,7 @@ def run_siscom(t1, interictal, ictal, out, siscom_threshold, mask_threshold,
 
     # Make MRI panels
     if mripanel:
-        print(Fore.GREEN + 'Plotting MRI panel results (~10-30s)...')
+        print(Fore.GREEN + 'Plotting MRI panel results (~30s-1 minute)...')
         print(Style.RESET_ALL)
         # Create list of slice orientations if 'all' option is selected
         if mripanel_orientation == 'all':
@@ -170,6 +170,11 @@ def run_siscom(t1, interictal, ictal, out, siscom_threshold, mask_threshold,
         print(Fore.GREEN + 'Plotting glass brain results (~30s-2 minutes)...')
         print(Style.RESET_ALL)
         siscom.make_glass_brain(t1_nii, siscom_z, siscom_dir, spm12_path, mcr_path)
+
+    # Clean output dir
+    print(Fore.GREEN + 'Cleaning up result files... (~30s)')
+    print(Style.RESET_ALL)
+    siscom.clean_output_dir(siscom_dir)
 
     print(Fore.GREEN + 'Done!')
     print(Style.RESET_ALL)

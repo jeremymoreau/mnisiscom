@@ -598,3 +598,34 @@ def create_output_dir(output_dir):
         os.mkdir(siscom_dir)
 
     return siscom_dir
+
+
+def clean_output_dir(out_dir):
+    # Remove unnecessary files
+    unnecessary_files = ['ictal.nii', 'ictal.nii.gz', 'interictal.nii', 'interictal.nii.gz',
+                         'T1_sn.mat', 'rictal.nii', 'siscom_z.nii']
+    for unnecessary_file in unnecessary_files:
+        if os.path.isfile(join(out_dir, unnecessary_file)):
+            os.remove(join(out_dir, unnecessary_file))
+
+    # Rename and gzip files
+    files_to_rename = [
+        ('rinterictal.nii', 'interictal_coregistered.nii'),
+        ('rrictal.nii', 'ictal_coregistered.nii'),
+        ('wsiscom_z.nii', 'siscom_z_MNI152.nii')
+    ] 
+
+    for file_tuple in files_to_rename:
+        if os.path.isfile(join(out_dir, file_tuple[0])):
+            os.rename(join(out_dir, file_tuple[0]), join(out_dir, file_tuple[1]))
+            gzip_file(join(out_dir, file_tuple[1]))
+            os.remove(join(out_dir, file_tuple[1]))
+
+    # Keep only T1.nii.gz (or gzip T1.nii)
+    t1_nii = join(out_dir, 'T1.nii')
+    t1_niigz = join(out_dir, 'T1.nii.gz')
+    if os.path.isfile(t1_niigz) and os.path.isfile(t1_nii):
+        os.remove(t1_nii)
+    elif os.path.isfile(t1_nii):
+        gzip_file(t1_nii)
+        os.remove(t1_nii)

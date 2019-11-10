@@ -132,10 +132,10 @@ def run_siscom(param_dict):
         print(Fore.GREEN + 'Coregistering interictal/ictal SPECT images to T1 with SPM (~1-5 minutes)...')
         print(Style.RESET_ALL)
 
-        eel.update_progress_bar('Coregistering images...', 10)
+        eel.update_progress_bar('Coregistering images...', 0)
         siscom.spm_coregister(t1_nii, [interictal_nii, ictal_nii], spm12_path, mcr_path)
         
-        eel.update_progress_bar('Coregistering images...', 30)
+        eel.update_progress_bar('Coregistering images...', 20)
         rinterictal_nii = join(siscom_dir, 'rinterictal.nii')
         rictal_nii = join(siscom_dir, 'rictal.nii')
         siscom.spm_coregister(rinterictal_nii, [rictal_nii], spm12_path, mcr_path)
@@ -148,8 +148,8 @@ def run_siscom(param_dict):
         t1_nii = t1
 
     # Run SISCOM
-    eel.update_progress_bar('Computing SISCOM...', 50)
-    print(Fore.GREEN + 'Computing SISCOM images (~5-10s)...')
+    eel.update_progress_bar('Computing SISCOM...', 40)
+    print(Fore.GREEN + 'Computing SISCOM images (~5-30s)...')
     print(Style.RESET_ALL)
     siscom.compute_siscom(rinterictal_nii, rrictal_nii, siscom_dir,
                           threshold=siscom_threshold, mask_cutoff=mask_threshold)
@@ -163,8 +163,8 @@ def run_siscom(param_dict):
 
     # Make MRI panels
     if mripanel:
-        eel.update_progress_bar('Plotting MRI panel results...', 60)
-        print(Fore.GREEN + 'Plotting MRI panel results (~10-30s)...')
+        eel.update_progress_bar('Plotting MRI panel results...', 50)
+        print(Fore.GREEN + 'Plotting MRI panel results (~30s-1 minute)...')
         print(Style.RESET_ALL)
         # Create list of slice orientations if 'all' option is selected
         panel_slices = ['ax', 'cor', 'sag']
@@ -176,15 +176,22 @@ def run_siscom(param_dict):
 
     # Make glass brain
     if glassbrain:
-        eel.update_progress_bar('Plotting glass brain results...', 80)
+        eel.update_progress_bar('Plotting glass brain results...', 70)
         print(Fore.GREEN + 'Plotting glass brain results (~30s-2 minutes)...')
         print(Style.RESET_ALL)
         siscom.make_glass_brain(t1_nii, siscom_z, siscom_dir, spm12_path, mcr_path)
 
     print(Fore.GREEN + 'Done!')
     print(Style.RESET_ALL)
+    
+    # Clean output dir
+    eel.update_progress_bar('Cleaning up...', 90)
+    print(Fore.GREEN + 'Cleaning up result files... (~30s)')
+    print(Style.RESET_ALL)
+    siscom.clean_output_dir(siscom_dir)
     deinit()  # stop colorama
 
+    # Show done message in GUI
     eel.update_progress_bar('Done!', 100)
     eel.show_done_message()
 
