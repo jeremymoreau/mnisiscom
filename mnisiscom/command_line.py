@@ -1,17 +1,17 @@
+import json
+from colorama import Fore, Back, Style
+from colorama import init, deinit
+import shutil
+from os.path import join
+import os
+import sys
 import click
 import platform
 import importlib
 from pathlib import Path
 import siscom
 importlib.reload(siscom)
-import sys
-import os
-from os.path import join
-import shutil
-from colorama import init, deinit
-from colorama import Fore, Back, Style
-from pathlib import Path
-import json
+
 
 def save_settings(spm12_path, mcr_path):
     settings = {'spm12_path': spm12_path, 'mcr_path': mcr_path}
@@ -42,7 +42,8 @@ def load_settings():
         else:
             return ''
     else:
-            return ''
+        return ''
+
 
 @click.command()
 @click.option('--t1', '-t1', type=click.Path(exists=True, dir_okay=False, resolve_path=True), required=True,
@@ -73,11 +74,11 @@ def load_settings():
               help='Thickness of slices (in voxels) for MRI panel. Default is 5')
 @click.option('--mripanel-transparency', type=float, default=0.8,
               help='Transparency value from 0 to 1 for interictal/ictal/SISCOM overlay layer. Default is 0.8 (80%)')
-@click.option('--mripanel-t1window', type=(float, float), default=(0.2,0.9),
+@click.option('--mripanel-t1window', type=(float, float), default=(0.2, 0.9),
               help='Scaling factor for min and max values of T1 MRI (0 to 1). Default values are 0.1 0.9')
-@click.option('--mripanel-spectwindow', type=(float, float), default=(0,4.5),
+@click.option('--mripanel-spectwindow', type=(float, float), default=(0, 4.5),
               help='Min and max values for standardised SPECT images (standard deviations). Default values are 0 4.5')
-@click.option('--mripanel-siscomwindow', type=(float, float), default=(0,2),
+@click.option('--mripanel-siscomwindow', type=(float, float), default=(0, 2),
               help='Min and max values for SISCOM image (difference of standard deviations). Default values are 0 2')
 @click.option('--glassbrain/--no-glassbrain', default=True,
               help='Whether or not to plot SISCOM results as glass brain (MIP). Default is "--glassbrain"')
@@ -85,8 +86,8 @@ def load_settings():
               help='Whether or not to skip the first coregistration step. Input images MUST already be coregistered and '
                    'have identical dimensions. Default is "--no-skipcoreg"')
 def run_siscom(t1, interictal, ictal, out, siscom_threshold, mask_threshold,
-                mripanel, mripanel_type, mripanel_orientation, mripanel_thickness,mripanel_transparency,
-                mripanel_t1window, mripanel_spectwindow, mripanel_siscomwindow, glassbrain, skipcoreg):
+               mripanel, mripanel_type, mripanel_orientation, mripanel_thickness, mripanel_transparency,
+               mripanel_t1window, mripanel_spectwindow, mripanel_siscomwindow, glassbrain, skipcoreg):
     """
     Command line tool for computing subtraction ictal SPECT coregistered to MRI (SISCOM).\n
     For research use only!\n\n
@@ -99,13 +100,16 @@ def run_siscom(t1, interictal, ictal, out, siscom_threshold, mask_threshold,
     settings = load_settings()
     if settings == '':
         if platform.system() == 'Windows':
-            spm12_path = click.prompt('\nEnter the SPM12 standalone installation path (e.g. C:\\path\\to\\spm12_win64.exe)', type=click.Path(exists=True))
+            spm12_path = click.prompt(
+                '\nEnter the SPM12 standalone installation path (e.g. C:\\path\\to\\spm12_win64.exe)', type=click.Path(exists=True))
             mcr_path = ''
         else:
-            spm12_path = click.prompt('\nEnter the SPM12 standalone installation path (e.g. /path/to/run_spm12.sh)', type=click.Path(exists=True))
+            spm12_path = click.prompt(
+                '\nEnter the SPM12 standalone installation path (e.g. /path/to/run_spm12.sh)', type=click.Path(exists=True))
             mcr_path_message = '\nEnter the MATLAB Compiler Runtime installation path. The selected folder name should ' \
                                '\nstart with "v" (e.g. /path/to/v95) and contain a subfolder called "mcr"'
-            mcr_path = click.prompt(mcr_path_message, type=click.Path(exists=True))
+            mcr_path = click.prompt(
+                mcr_path_message, type=click.Path(exists=True))
 
         # Save settings
         save_settings(spm12_path, mcr_path)
@@ -118,18 +122,23 @@ def run_siscom(t1, interictal, ictal, out, siscom_threshold, mask_threshold,
     siscom_dir = siscom.create_output_dir(out)
 
     # Copy original T1, interictal, and ictal volumes to siscom_dir
-    t1_nii = shutil.copy(t1, join(siscom_dir, 'T1' + ''.join(Path(t1).suffixes)))
-    interictal_nii = shutil.copy(interictal, join(siscom_dir, 'interictal' + ''.join(Path(interictal).suffixes)))
-    ictal_nii = shutil.copy(ictal, join(siscom_dir, 'ictal' + ''.join(Path(ictal).suffixes)))
+    t1_nii = shutil.copy(
+        t1, join(siscom_dir, 'T1' + ''.join(Path(t1).suffixes)))
+    interictal_nii = shutil.copy(interictal, join(
+        siscom_dir, 'interictal' + ''.join(Path(interictal).suffixes)))
+    ictal_nii = shutil.copy(ictal, join(
+        siscom_dir, 'ictal' + ''.join(Path(ictal).suffixes)))
 
     if not skipcoreg:
         # Coregister i/ii to t1, then coregister ri to rii (for better alignment)
         print(Fore.GREEN + 'Coregistering interictal/ictal SPECT images to T1 with SPM (~1-5 minutes)...')
         print(Style.RESET_ALL)
-        siscom.spm_coregister(t1_nii, [interictal_nii, ictal_nii], spm12_path, mcr_path)
+        siscom.spm_coregister(
+            t1_nii, [interictal_nii, ictal_nii], spm12_path, mcr_path)
         rinterictal_nii = join(siscom_dir, 'rinterictal.nii')
         rictal_nii = join(siscom_dir, 'rictal.nii')
-        siscom.spm_coregister(rinterictal_nii, [rictal_nii], spm12_path, mcr_path)
+        siscom.spm_coregister(
+            rinterictal_nii, [rictal_nii], spm12_path, mcr_path)
         rrictal_nii = join(siscom_dir, 'rrictal.nii')
     else:
         rinterictal_nii = interictal_nii
@@ -167,7 +176,8 @@ def run_siscom(t1, interictal, ictal, out, siscom_threshold, mask_threshold,
     if glassbrain:
         print(Fore.GREEN + 'Plotting glass brain results (~30s-2 minutes)...')
         print(Style.RESET_ALL)
-        siscom.make_glass_brain(t1_nii, siscom_z, siscom_dir, spm12_path, mcr_path)
+        siscom.make_glass_brain(
+            t1_nii, siscom_z, siscom_dir, spm12_path, mcr_path)
 
     # Clean output dir
     print(Fore.GREEN + 'Cleaning up result files... (~30s)')
