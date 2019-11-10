@@ -99,14 +99,12 @@ def run_siscom(t1, interictal, ictal, out, siscom_threshold, mask_threshold,
     settings = load_settings()
     if settings == '':
         if platform.system() == 'Windows':
-            spm12_path = click.prompt('Enter the SPM12 standalone installation path (e.g. /path/to/spm12_win64.exe)', type=click.Path(exists=True))
+            spm12_path = click.prompt('\nEnter the SPM12 standalone installation path (e.g. C:\\path\\to\\spm12_win64.exe)', type=click.Path(exists=True))
             mcr_path = ''
         else:
-            spm12_path = click.prompt('Enter the SPM12 standalone installation path (e.g. /path/to/run_spm12.sh)', type=click.Path(exists=True))
-            mcr_path_message = """
-            Enter the MATLAB Compiler Runtime installation path. The selected folder name should start with "v" (e.g. v95)
-             and contain a subfolder called "mcr"
-            """
+            spm12_path = click.prompt('\nEnter the SPM12 standalone installation path (e.g. /path/to/run_spm12.sh)', type=click.Path(exists=True))
+            mcr_path_message = '\nEnter the MATLAB Compiler Runtime installation path. The selected folder name should ' \
+                               '\nstart with "v" (e.g. /path/to/v95) and contain a subfolder called "mcr"'
             mcr_path = click.prompt(mcr_path_message, type=click.Path(exists=True))
 
         # Save settings
