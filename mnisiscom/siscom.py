@@ -1,3 +1,14 @@
+from PIL import ImageOps
+from PIL import ImageDraw
+from PIL import ImageFont
+from PIL import Image
+from matplotlib import pyplot as plt
+from dipy.align.reslice import reslice
+from os.path import join
+from contextlib import contextmanager
+import subprocess
+import nibabel as nib
+import numpy as np
 import brain_cmaps
 import os
 import sys
@@ -6,23 +17,12 @@ import shutil
 import pathlib
 import contextlib
 import warnings
-with warnings.catch_warnings():  # ignore DeprecationWarning for joblib
-    # TODO: Remove this when sklearn 0.23 is released
-    warnings.filterwarnings("ignore",category=DeprecationWarning)
+with warnings.catch_warnings():  # ignore joblib DeprecationWarning caused by importing nilearn
+    # TODO: Remove this when nilearn is updated
+    warnings.filterwarnings("ignore", category=DeprecationWarning)
     import sklearn
-import numpy as np
-import nibabel as nib
-import subprocess
-from nilearn import plotting
 from nilearn import masking
-from contextlib import contextmanager
-from os.path import join
-from dipy.align.reslice import reslice
-from matplotlib import pyplot as plt
-from PIL import Image
-from PIL import ImageFont
-from PIL import ImageDraw
-from PIL import ImageOps
+from nilearn import plotting
 
 
 def ungzip(gzipped_file):
@@ -85,7 +85,8 @@ def reslice_iso(orig_img):
     orig_affine = orig_img.affine
     orig_zooms = orig_img.header.get_zooms()[:3]
     new_zooms = (1., 1., 1.)
-    new_data, new_affine = reslice(orig_data, orig_affine, orig_zooms, new_zooms)
+    new_data, new_affine = reslice(
+        orig_data, orig_affine, orig_zooms, new_zooms)
     new_img = nib.Nifti1Image(new_data, new_affine)
 
     return new_img
@@ -109,6 +110,7 @@ def load_RAS_orient(path_to_nii):
     nii_RAS = nib.as_closest_canonical(nii)
 
     return nii_RAS
+
 
 def spm_coregister(target, sources, spm12_path, mcr_path):
     """Wraps SPM's spm.spatial.coreg
@@ -151,14 +153,16 @@ def spm_coregister(target, sources, spm12_path, mcr_path):
             source = ungzip(source)
 
         # Create SPM batch file
-        spm_batch_file = os.path.join(os.path.dirname(target), 'spm_coregister_batch' + str(i) + '.m')
+        spm_batch_file = os.path.join(os.path.dirname(
+            target), 'spm_coregister_batch' + str(i) + '.m')
         with open(spm_batch_file, 'w') as batch_file:
-            batch_file.write(spm_coreg_batch.format(target=target, source=source))
+            batch_file.write(spm_coreg_batch.format(
+                target=target, source=source))
 
         # Run SPM batch file (Don't include MCR path if using Windows .exe)
         if spm12_path.endswith('.exe'):
             if os.path.isfile(spm12_path) and os.path.isfile(spm_batch_file):
-                command = [spm12_path, 'batch', spm_batch_file] 
+                command = [spm12_path, 'batch', spm_batch_file]
         else:
             if os.path.isfile(spm12_path) and os.path.isdir(mcr_path) and os.path.isfile(spm_batch_file):
                 command = [spm12_path, mcr_path, 'batch', spm_batch_file]
@@ -188,7 +192,8 @@ def spm_normalise(source, apply_to, spm12_path, mcr_path):
     -------
         None
     """
-    mni152_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'MNI152_T1.nii')
+    mni152_path = os.path.join(os.path.dirname(
+        os.path.realpath(__file__)), 'MNI152_T1.nii')
 
     # SPM batch script template
     spm_norm_batch = """
@@ -219,14 +224,16 @@ def spm_normalise(source, apply_to, spm12_path, mcr_path):
         apply_to = ungzip(apply_to)
 
     # Create SPM batch file
-    spm_batch_file = os.path.join(os.path.dirname(source), 'spm_normalise_batch.m')
+    spm_batch_file = os.path.join(
+        os.path.dirname(source), 'spm_normalise_batch.m')
     with open(spm_batch_file, 'w') as batch_file:
-        batch_file.write(spm_norm_batch.format(source=source, apply_to=apply_to, mni152=mni152_path))
+        batch_file.write(spm_norm_batch.format(
+            source=source, apply_to=apply_to, mni152=mni152_path))
 
     # Run SPM batch file (Don't include MCR path if using Windows .exe)
     if spm12_path.endswith('.exe'):
         if os.path.isfile(spm12_path) and os.path.isfile(spm_batch_file):
-            command = [spm12_path, 'batch', spm_batch_file] 
+            command = [spm12_path, 'batch', spm_batch_file]
     else:
         if os.path.isfile(spm12_path) and os.path.isdir(mcr_path) and os.path.isfile(spm_batch_file):
             command = [spm12_path, mcr_path, 'batch', spm_batch_file]
@@ -234,7 +241,7 @@ def spm_normalise(source, apply_to, spm12_path, mcr_path):
 
     # remove SPM batch file
     os.remove(spm_batch_file)
-         
+
 
 def compute_siscom(interictal_nii, ictal_nii, out_dir, threshold=0.5, mask_cutoff=0.6):
     """Given coregistered interictal/ictal nii images, compute SISCOM
@@ -269,7 +276,8 @@ def compute_siscom(interictal_nii, ictal_nii, out_dir, threshold=0.5, mask_cutof
     ictal[np.isnan(ictal)] = 0
 
     # Create a mask from interictal image and mask interictal/ictal images with it
-    mask_img = masking.compute_epi_mask(interictal_img, lower_cutoff=mask_cutoff)
+    mask_img = masking.compute_epi_mask(
+        interictal_img, lower_cutoff=mask_cutoff)
     mask = mask_img.get_data()
     ictal = ictal * mask
     interictal = interictal * mask
@@ -280,7 +288,7 @@ def compute_siscom(interictal_nii, ictal_nii, out_dir, threshold=0.5, mask_cutof
 
     # Compute subtratction image
     siscom = ictal_std - interictal_std
-    #siscom[siscom < 0] = 0  # ignore negative (i.e. where interictal > ictal)
+    # siscom[siscom < 0] = 0  # ignore negative (i.e. where interictal > ictal)
     #siscom_std = (siscom - np.mean(siscom)) / np.std(siscom)
 
     # Threshold subtraction (ignore voxels where interictal > ictal)
@@ -322,7 +330,8 @@ def get_slides_of_interest(mask_nii, slice_orientation):
     elif slice_orientation == 'sag':
         nb_slices = mask_data.shape[0]
     else:
-        raise ValueError("Valid options for slice_orientation are 'ax', 'cor', or 'sag'")
+        raise ValueError(
+            "Valid options for slice_orientation are 'ax', 'cor', or 'sag'")
 
     min_slice = 0
     max_slice = 0
@@ -389,7 +398,7 @@ def make_mri_panel(t1_nii, interictal_std_nii, ictal_std_nii, siscom_nii, mask_n
     if not os.path.isdir(results_dir):
         os.mkdir(results_dir)
 
-    ## Make slice snapshots
+    # Make slice snapshots
     # create dirs
     mri_panel_dir = join(results_dir, 'mri_panel')
     if not os.path.isdir(mri_panel_dir):
@@ -431,14 +440,16 @@ def make_mri_panel(t1_nii, interictal_std_nii, ictal_std_nii, siscom_nii, mask_n
         xdim = sag_slice1.shape[0]
         ydim = sag_slice1.shape[1]
     else:
-        raise ValueError("Valid options for slice_orientation are 'ax', 'cor', or 'sag'")
+        raise ValueError(
+            "Valid options for slice_orientation are 'ax', 'cor', or 'sag'")
 
     # plot matplotlib figures
     dpi = 80  # This is to set fisize to actual pixel dimensions of image
-    figsize=(ydim/dpi, xdim/dpi)
+    figsize = (ydim/dpi, xdim/dpi)
 
     min_slice, max_slice = get_slides_of_interest(mask_nii, slice_orientation)
-    plt.rcParams['figure.max_open_warning'] = 99999999  # ignore "too many figures" warning...
+    # ignore "too many figures" warning...
+    plt.rcParams['figure.max_open_warning'] = 99999999
     for dir_label, image in zip(dir_labels, images):
         for s in range(nb_slices):
             if s % slice_thickness == 0 and s > min_slice and s < max_slice:
@@ -447,11 +458,14 @@ def make_mri_panel(t1_nii, interictal_std_nii, ictal_std_nii, siscom_nii, mask_n
                 t1_min = (1 + t1_window[0]) * np.min(t1)
                 t1_max = t1_window[1] * np.max(t1)
                 if slice_orientation == 'ax':
-                    fig.figimage(np.fliplr(t1[:, :, s].T), origin='lower', cmap='gray', vmin=t1_min, vmax=t1_max)
+                    fig.figimage(np.fliplr(
+                        t1[:, :, s].T), origin='lower', cmap='gray', vmin=t1_min, vmax=t1_max)
                 elif slice_orientation == 'cor':
-                    fig.figimage(np.fliplr(t1[:, s, :].T), origin='lower', cmap='gray', vmin=t1_min, vmax=t1_max)
+                    fig.figimage(np.fliplr(
+                        t1[:, s, :].T), origin='lower', cmap='gray', vmin=t1_min, vmax=t1_max)
                 elif slice_orientation == 'sag':
-                    fig.figimage(np.fliplr(t1[s, :, :].T), origin='lower', cmap='gray', vmin=t1_min, vmax=t1_max)
+                    fig.figimage(np.fliplr(
+                        t1[s, :, :].T), origin='lower', cmap='gray', vmin=t1_min, vmax=t1_max)
 
                 # plot overlay (Flip LR for display in LAS radiological convetion)
                 if slice_orientation == 'ax':
@@ -462,14 +476,15 @@ def make_mri_panel(t1_nii, interictal_std_nii, ictal_std_nii, siscom_nii, mask_n
                     slice_data = image[s, :, :].T
                 if not dir_label == 'siscom':
                     fig.figimage(np.fliplr(slice_data), origin='lower', cmap=ge_cmap, alpha=alpha,
-                    vmin=spect_window[0], vmax=spect_window[1])
+                                 vmin=spect_window[0], vmax=spect_window[1])
                 else:
                     fig.figimage(np.fliplr(slice_data), origin='lower', cmap=pet_cmap, alpha=alpha,
-                    vmin=siscom_window[0], vmax=siscom_window[1])
+                                 vmin=siscom_window[0], vmax=siscom_window[1])
 
                 # save image
-                filepath = join(mri_panel_dir, dir_label, slice_orientation + str(s).zfill(4) + '.png')
-                plt.savefig(filepath, bbox_inches='tight', pad_inches = 0, dpi='figure',
+                filepath = join(mri_panel_dir, dir_label,
+                                slice_orientation + str(s).zfill(4) + '.png')
+                plt.savefig(filepath, bbox_inches='tight', pad_inches=0, dpi='figure',
                             transparent=False, facecolor='black')
                 plt.close()
 
@@ -480,11 +495,14 @@ def make_mri_panel(t1_nii, interictal_std_nii, ictal_std_nii, siscom_nii, mask_n
         imagedir_images = [join(imagedir, i) for i in os.listdir(imagedir)]
         imagefiles = imagefiles + imagedir_images
     if slice_orientation == 'ax':
-        imagefiles = [i for i in imagefiles if os.path.basename(i).startswith('ax')]
+        imagefiles = [
+            i for i in imagefiles if os.path.basename(i).startswith('ax')]
     elif slice_orientation == 'cor':
-        imagefiles = [i for i in imagefiles if os.path.basename(i).startswith('cor')]
+        imagefiles = [i for i in imagefiles if os.path.basename(
+            i).startswith('cor')]
     elif slice_orientation == 'sag':
-        imagefiles = [i for i in imagefiles if os.path.basename(i).startswith('sag')]
+        imagefiles = [i for i in imagefiles if os.path.basename(
+            i).startswith('sag')]
 
     first_image = Image.open(imagefiles[0])
     width = first_image.width
@@ -492,7 +510,8 @@ def make_mri_panel(t1_nii, interictal_std_nii, ictal_std_nii, siscom_nii, mask_n
 
     # Check if panel type is valid
     if panel_type not in ['all', 'mri_panel', 'mri_slide']:
-        raise ValueError("Valid options for panel_type are 'all', 'mri_panel', or 'mri_slide'")
+        raise ValueError(
+            "Valid options for panel_type are 'all', 'mri_panel', or 'mri_slide'")
     # Assemble MRI panel
     if panel_type == 'all' or panel_type == 'mri_panel':
         columns = len(imagedirs)
@@ -501,32 +520,36 @@ def make_mri_panel(t1_nii, interictal_std_nii, ictal_std_nii, siscom_nii, mask_n
         canvas_h = rows*height
         new_img = Image.new('RGB', (canvas_w, canvas_h))
         for i, dir_label in enumerate(dir_labels):
-            images = [i for i in imagefiles if dir_label == pathlib.Path(i).parent.stem]
+            images = [i for i in imagefiles if dir_label ==
+                      pathlib.Path(i).parent.stem]
             images = sorted(images)
             for j, image in enumerate(images):
                 img = Image.open(image)
-                new_img.paste(img,(i*width,j*height))
-        new_img_path = os.path.join(results_dir, 'SISCOM-' + slice_orientation + '_mri_panel.png')
+                new_img.paste(img, (i*width, j*height))
+        new_img_path = os.path.join(
+            results_dir, 'SISCOM-' + slice_orientation + '_mri_panel.png')
         new_img.save(new_img_path)
 
-        ## Add labels to MRI panel
+        # Add labels to MRI panel
         labels = ['Interictal', 'Ictal', 'SISCOM']
         img = Image.open(new_img_path)
         img = ImageOps.expand(img, border=30)
         panel_width, panel_height = img.size
         draw = ImageDraw.Draw(img)
-        font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'OpenSans-Regular.ttf')
+        font_path = os.path.join(os.path.dirname(
+            os.path.realpath(__file__)), 'OpenSans-Regular.ttf')
         font = ImageFont.truetype(font_path, panel_width//30)
 
         mult = panel_width / len(labels)
         for i, label in enumerate(labels):
-        	draw.text((i*mult, 10),label,(255,255,255),font=font)
+            draw.text((i*mult, 10), label, (255, 255, 255), font=font)
         img.save(new_img_path)
 
     # Assemble MRI slide
     if panel_type == 'all' or panel_type == 'mri_slide':
         for dir_label in dir_labels:
-            images = [i for i in imagefiles if dir_label == pathlib.Path(i).parent.stem]
+            images = [i for i in imagefiles if dir_label ==
+                      pathlib.Path(i).parent.stem]
             images = sorted(images)
             nb_images = len(images)
             columns = 7
@@ -542,13 +565,14 @@ def make_mri_panel(t1_nii, interictal_std_nii, ictal_std_nii, siscom_nii, mask_n
             col_i = 0
             for i, image in enumerate(images):
                 img = Image.open(image)
-                new_img.paste(img,(col_i*width,row_i*height))
+                new_img.paste(img, (col_i*width, row_i*height))
                 if (i + 1) % columns == 0:
                     row_i += 1
                 col_i += 1
                 if col_i % columns == 0:
                     col_i = 0
-            new_img.save(os.path.join(results_dir, dir_label.upper() + '-' + slice_orientation + '_mri_slide.png'))
+            new_img.save(os.path.join(results_dir, dir_label.upper(
+            ) + '-' + slice_orientation + '_mri_slide.png'))
 
 
 def make_glass_brain(t1_nii, siscom_nii, out_dir, spm12_path, mcr_path):
@@ -573,7 +597,7 @@ def make_glass_brain(t1_nii, siscom_nii, out_dir, spm12_path, mcr_path):
     -------
         None
 
-    """  
+    """
     spm_normalise(t1_nii, siscom_nii, spm12_path, mcr_path)
 
     # Make results dirs
@@ -583,7 +607,8 @@ def make_glass_brain(t1_nii, siscom_nii, out_dir, spm12_path, mcr_path):
 
     # Plot glass brain
     with warnings.catch_warnings():
-        warnings.filterwarnings("ignore",category=DeprecationWarning)  # ignore scipy 'np.bool_' scalars... as index
+        # ignore scipy 'np.bool_' scalars... as index
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
         plotting.plot_glass_brain(join(out_dir, join(out_dir, 'wsiscom_z.nii')),
                                   colorbar=True).savefig(join(results_dir, 'SISCOM-glass_brain.png'))
 
@@ -613,11 +638,12 @@ def clean_output_dir(out_dir):
         ('rinterictal.nii', 'interictal_coregistered.nii'),
         ('rrictal.nii', 'ictal_coregistered.nii'),
         ('wsiscom_z.nii', 'siscom_z_MNI152.nii')
-    ] 
+    ]
 
     for file_tuple in files_to_rename:
         if os.path.isfile(join(out_dir, file_tuple[0])):
-            os.rename(join(out_dir, file_tuple[0]), join(out_dir, file_tuple[1]))
+            os.rename(join(out_dir, file_tuple[0]), join(
+                out_dir, file_tuple[1]))
             gzip_file(join(out_dir, file_tuple[1]))
             os.remove(join(out_dir, file_tuple[1]))
 
