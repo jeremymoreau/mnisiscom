@@ -1,6 +1,7 @@
 import click
 import platform
 import importlib
+from pathlib import Path
 import siscom
 importlib.reload(siscom)
 import sys
@@ -118,25 +119,20 @@ def run_siscom(t1, interictal, ictal, out, siscom_threshold, mask_threshold,
     # Create output directory
     siscom_dir = siscom.create_output_dir(out)
 
-
     # Copy original T1, interictal, and ictal volumes to siscom_dir
-    nii_basenames = []
-    for nii in [t1, interictal, ictal]:
-        shutil.copy2(nii, siscom_dir)
-        nii_basenames.append(os.path.basename(nii))
-    t1_nii = join(siscom_dir, nii_basenames[0])
-    interictal_nii = join(siscom_dir, nii_basenames[1])
-    ictal_nii = join(siscom_dir, nii_basenames[2])
+    t1_nii = shutil.copy(t1, join(siscom_dir, 'T1' + ''.join(Path(t1).suffixes)))
+    interictal_nii = shutil.copy(interictal, join(siscom_dir, 'interictal' + ''.join(Path(interictal).suffixes)))
+    ictal_nii = shutil.copy(ictal, join(siscom_dir, 'ictal' + ''.join(Path(ictal).suffixes)))
 
     if not skipcoreg:
         # Coregister i/ii to t1, then coregister ri to rii (for better alignment)
         print(Fore.GREEN + 'Coregistering interictal/ictal SPECT images to T1 with SPM (~1-5 minutes)...')
         print(Style.RESET_ALL)
         siscom.spm_coregister(t1_nii, [interictal_nii, ictal_nii], spm12_path, mcr_path)
-        rinterictal_nii = join(siscom_dir, 'r' + nii_basenames[1])
-        rictal_nii = join(siscom_dir, 'r' + nii_basenames[2])
+        rinterictal_nii = join(siscom_dir, 'rinterictal.nii')
+        rictal_nii = join(siscom_dir, 'rictal.nii')
         siscom.spm_coregister(rinterictal_nii, [rictal_nii], spm12_path, mcr_path)
-        rrictal_nii = join(siscom_dir, 'rr' + nii_basenames[2])
+        rrictal_nii = join(siscom_dir, 'rrictal.nii')
     else:
         rinterictal_nii = interictal_nii
         rrictal_nii = ictal_nii
