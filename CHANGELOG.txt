@@ -7,5 +7,14 @@
 - Added --skipcoreg option
 
 0.3.0
-- Package scripts for pypi
+- Packaged scripts for pypi
 - Refactoring
+
+0.4.0
+- Added GUI
+- Removed nipype dependency (replaced with direct call to SPM12 standalone)
+- Cleaned up file output
+- Fixed coronal slice cropping bug
+- Refactoring
+- Improved packaging
+- Added documentation and installation instructions
