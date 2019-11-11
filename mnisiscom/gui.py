@@ -12,7 +12,7 @@ from colorama import Fore, Back, Style
 import subprocess
 import eel
 
-eel.init('gui')
+
 
 
 @eel.expose
@@ -217,5 +217,9 @@ def run_siscom(param_dict):
         subprocess.run(['xdg-open', siscom_dir])
 
 
-if __name__ == '__main__':
+def start_gui():
+    eel.init('gui')
     eel.start('main.html', mode='chrome', size=(1000, 700))
+
+if __name__ == '__main__':
+    start_gui()

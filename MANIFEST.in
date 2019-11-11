@@ -2,3 +2,4 @@ include README.md
 include LICENSE.txt
 include mnisiscom/MNI152_T1.nii
 include mnisiscom/OpenSans-Regular.ttf
+recursive-include mnisiscom/gui *
