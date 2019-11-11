@@ -22,6 +22,7 @@ setup(name='mnisiscom',
                             'mnisiscom_gui=mnisiscom.gui:start_gui'],
     },
     include_package_data=True,
+    python_requires='>=3.5, <3.8',
     install_requires=[
           'numpy',
           'nibabel',
@@ -34,6 +35,6 @@ setup(name='mnisiscom',
           'click',
           'colorama',
           'eel',
-          'pywin32 ; platform_system=="Windows"'
+        #   'pywin32 ; platform_system=="Windows"'
       ],
     zip_safe=False)

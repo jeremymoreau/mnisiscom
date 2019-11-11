@@ -218,7 +218,8 @@ def run_siscom(param_dict):
 
 
 def start_gui():
-    eel.init('gui')
+    cwd = os.path.dirname(os.path.abspath(__file__))
+    eel.init(join(cwd, 'gui'))
     eel.start('main.html', mode='chrome', size=(1000, 700))
 
 if __name__ == '__main__':
