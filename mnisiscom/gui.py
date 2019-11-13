@@ -208,13 +208,14 @@ def run_siscom(param_dict):
     eel.update_progress_bar('Done!', 100)
     eel.show_done_message()
 
-    # Open results folder
-    if platform.system() == 'Windows':
-        os.startfile(siscom_dir)
-    elif platform.system() == 'Darwin':
-        subprocess.run(['open', siscom_dir])
-    else:
-        subprocess.run(['xdg-open', siscom_dir])
+    # Open results folder (Check that dir exists before calling subprocess)
+    if os.path.isdir(siscom_dir):
+        if platform.system() == 'Windows':
+            os.startfile(siscom_dir)
+        elif platform.system() == 'Darwin':
+            subprocess.run(['open', siscom_dir])
+        else:
+            subprocess.run(['xdg-open', siscom_dir])
 
 
 def start_gui():
