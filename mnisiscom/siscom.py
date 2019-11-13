@@ -21,6 +21,9 @@ with warnings.catch_warnings():  # ignore joblib DeprecationWarning caused by im
     # TODO: Remove this when nilearn is updated
     warnings.filterwarnings("ignore", category=DeprecationWarning)
     import sklearn
+from sklearn.neighbors.ball_tree import NeighborsHeap  # Only to prevent errors with PyInstaller
+from sklearn.neighbors import quad_tree  # Only to prevent errors with PyInstaller
+import nilearn
 from nilearn import masking
 from nilearn import plotting
 
@@ -192,8 +195,11 @@ def spm_normalise(source, apply_to, spm12_path, mcr_path):
     -------
         None
     """
-    mni152_path = os.path.join(os.path.dirname(
-        os.path.realpath(__file__)), 'MNI152_T1.nii')
+    if getattr(sys, 'frozen', False):
+        # Path for PyInstaller
+        mni152_path = join(sys._MEIPASS, 'mnisiscom', 'MNI152_T1.nii')
+    else:
+        mni152_path = join(os.path.dirname(os.path.realpath(__file__)), 'MNI152_T1.nii')
 
     # SPM batch script template
     spm_norm_batch = """
@@ -536,8 +542,13 @@ def make_mri_panel(t1_nii, interictal_std_nii, ictal_std_nii, siscom_nii, mask_n
         img = ImageOps.expand(img, border=30)
         panel_width, panel_height = img.size
         draw = ImageDraw.Draw(img)
-        font_path = os.path.join(os.path.dirname(
-            os.path.realpath(__file__)), 'OpenSans-Regular.ttf')
+
+        if getattr(sys, 'frozen', False):
+            # Path for PyInstaller
+            font_path = join(sys._MEIPASS, 'mnisiscom', 'OpenSans-Regular.ttf')
+        else:
+            font_path = join(os.path.dirname(os.path.realpath(__file__)), 'OpenSans-Regular.ttf')
+
         font = ImageFont.truetype(font_path, panel_width//30)
 
         mult = panel_width / len(labels)

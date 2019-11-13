@@ -1,18 +1,18 @@
+import json
 import os
-from os.path import join
 import platform
 import random
-import json
 import shutil
+import subprocess
+import sys
+from os.path import join
 from pathlib import Path
 from tkinter import Tk, filedialog
-import siscom
-from colorama import init, deinit
-from colorama import Fore, Back, Style
-import subprocess
+
 import eel
+from colorama import Back, Fore, Style, deinit, init
 
-
+import siscom
 
 
 @eel.expose
@@ -218,9 +218,20 @@ def run_siscom(param_dict):
 
 
 def start_gui():
+    """Start the mnisiscom GUI
+
+    This function is used to start the mnisiscom GUI via the 'mnisiscom_gui' console_scripts entry point.
+
+    """
     cwd = os.path.dirname(os.path.abspath(__file__))
     eel.init(join(cwd, 'gui'))
-    eel.start('main.html', mode='chrome', size=(1000, 700))
+    eel.start('main.html', mode='chrome', size=(1000, 700), port=0)
 
 if __name__ == '__main__':
-    start_gui()
+    if getattr(sys, 'frozen', False):
+        # Path for PyInstaller
+        eel.init(join('mnisiscom', 'gui'))
+    else:
+        # Path if started as script
+        eel.init('gui')
+    eel.start('main.html', mode='chrome', size=(1000, 700), port=0)
