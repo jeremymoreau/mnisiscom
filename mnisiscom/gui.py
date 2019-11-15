@@ -20,8 +20,15 @@ def get_nii_file():
     root = Tk()
     root.withdraw()
     root.wm_attributes('-topmost', 1)
+    # Workaround for MAC OS file picker not gaining focus
+    if platform.system() == 'Darwin':
+        subprocess.run(['/usr/bin/osascript', '-e',
+        'tell app "Finder" to set frontmost of process "python" to true'])
+    root.update()
     file_path = filedialog.askopenfilename(
-        title="Select file", filetypes=[("NIfTI Files", "*.nii")])
+        title="Select file", filetypes=[("NIfTI Files", "*.nii")], parent=root)
+    root.update()
+    root.destroy()
 
     return file_path
 
@@ -31,7 +38,14 @@ def get_folder():
     root = Tk()
     root.withdraw()
     root.wm_attributes('-topmost', 1)
-    folder_path = filedialog.askdirectory()
+    # Workaround for MAC OS file picker not gaining focus
+    if platform.system() == 'Darwin':
+        subprocess.run(['/usr/bin/osascript', '-e',
+        'tell app "Finder" to set frontmost of process "python" to true'])
+    root.update()
+    folder_path = filedialog.askdirectory(parent=root)
+    root.update()
+    root.destroy()
 
     return folder_path
 
@@ -41,7 +55,14 @@ def get_mcr_folder():
     root = Tk()
     root.withdraw()
     root.wm_attributes('-topmost', 1)
+    # Workaround for MAC OS file picker not gaining focus
+    if platform.system() == 'Darwin':
+        subprocess.run(['/usr/bin/osascript', '-e',
+        'tell app "Finder" to set frontmost of process "python" to true'])
+    root.update()
     folder_path = filedialog.askdirectory()
+    root.update()
+    root.destroy()
 
     # Check if valid MCR folder is selected
     folder_content = os.listdir(folder_path)
@@ -58,11 +79,26 @@ def get_spm_bin():
     root.wm_attributes('-topmost', 1)
     spm12_path = ''
     if platform.system() == 'Windows':
-        spm12_path = filedialog.askopenfilename(title="Select SPM12", filetypes=[
+        root.update()
+        spm12_path = filedialog.askopenfilename(title='Select SPM12 ("spm12_win64.exe")', filetypes=[
                                                 ("SPM12", "spm12_win64.exe")])
-    else:
+        root.update()
+        root.destroy()
+    # Workaround for MAC OS file picker not gaining focus
+    elif platform.system() == 'Darwin':
+        subprocess.run(['/usr/bin/osascript', '-e',
+        'tell app "Finder" to set frontmost of process "python" to true'])
+        root.update()
         spm12_path = filedialog.askopenfilename(
-            title="Select SPM12", filetypes=[("SPM12", "run_spm12.sh")])
+            title='Select SPM12 ("run_spm12.sh")')
+        root.update()
+        root.destroy()
+    else:
+        root.update()
+        spm12_path = filedialog.askopenfilename(
+            title='Select SPM12 ("run_spm12.sh")', filetypes=[("SPM12", "run_spm12.sh")])
+        root.update()
+        root.destroy()
 
     return spm12_path
 
