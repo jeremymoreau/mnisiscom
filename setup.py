@@ -40,7 +40,6 @@ setup(name='mnisiscom',
       install_requires=[
           'numpy',
           'nibabel',
-          'nipype',
           'scikit-learn',
           'nilearn',
           'dipy',
