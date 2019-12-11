@@ -11,6 +11,7 @@ import nibabel as nib
 import numpy as np
 import brain_cmaps
 import os
+import platform
 import sys
 import gzip
 import shutil
@@ -115,6 +116,27 @@ def load_RAS_orient(path_to_nii):
     return nii_RAS
 
 
+def run_cmd(command):
+    """Wraps subprocess.run() to avoid console popping up on Windows with PyInstaller --noconsole
+
+    Args:
+        command (list): Liist of arguments to pass to subprocess.run()
+
+    """
+    if platform.system() == 'Windows':
+        # Prevent PyInstaller executable from popping up a command window by default when
+        # run with the --noconsole option.
+        # https://github.com/pyinstaller/pyinstaller/wiki/Recipe-subprocess
+        si = subprocess.STARTUPINFO()
+        si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        env = os.environ
+        subprocess.run(command, startupinfo=si, env=env, stdout=subprocess.PIPE,
+                        stdin=subprocess.DEVNULL, stderr=subprocess.PIPE)
+    else:
+        subprocess.run(command, stdout=subprocess.PIPE,
+                        stdin=subprocess.DEVNULL, stderr=subprocess.PIPE)
+
+
 def spm_coregister(target, sources, spm12_path, mcr_path):
     """Wraps SPM's spm.spatial.coreg
 
@@ -169,7 +191,7 @@ def spm_coregister(target, sources, spm12_path, mcr_path):
         else:
             if os.path.isfile(spm12_path) and os.path.isdir(mcr_path) and os.path.isfile(spm_batch_file):
                 command = [spm12_path, mcr_path, 'batch', spm_batch_file]
-        subprocess.run(command)
+        run_cmd(command)
 
         # remove SPM batch file
         os.remove(spm_batch_file)
@@ -243,7 +265,7 @@ def spm_normalise(source, apply_to, spm12_path, mcr_path):
     else:
         if os.path.isfile(spm12_path) and os.path.isdir(mcr_path) and os.path.isfile(spm_batch_file):
             command = [spm12_path, mcr_path, 'batch', spm_batch_file]
-    subprocess.run(command)
+    run_cmd(command)
 
     # remove SPM batch file
     os.remove(spm_batch_file)

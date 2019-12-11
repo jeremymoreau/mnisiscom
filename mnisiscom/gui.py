@@ -23,7 +23,7 @@ def get_nii_file():
     # Workaround for MAC OS file picker not gaining focus
     if platform.system() == 'Darwin':
         subprocess.run(['/usr/bin/osascript', '-e',
-        'tell app "Finder" to set frontmost of process "python" to true'])
+        'tell app "Finder" to set frontmost of process "python" to true'], capture_output=True)
     root.update()
     file_path = filedialog.askopenfilename(
         title="Select file", filetypes=[("NIfTI Files", "*.nii")], parent=root)
@@ -41,7 +41,7 @@ def get_folder():
     # Workaround for MAC OS file picker not gaining focus
     if platform.system() == 'Darwin':
         subprocess.run(['/usr/bin/osascript', '-e',
-        'tell app "Finder" to set frontmost of process "python" to true'])
+        'tell app "Finder" to set frontmost of process "python" to true'], capture_output=True)
     root.update()
     folder_path = filedialog.askdirectory(parent=root)
     root.update()
@@ -58,7 +58,7 @@ def get_mcr_folder():
     # Workaround for MAC OS file picker not gaining focus
     if platform.system() == 'Darwin':
         subprocess.run(['/usr/bin/osascript', '-e',
-        'tell app "Finder" to set frontmost of process "python" to true'])
+        'tell app "Finder" to set frontmost of process "python" to true'], capture_output=True)
     root.update()
     folder_path = filedialog.askdirectory()
     root.update()
@@ -87,7 +87,7 @@ def get_spm_bin():
     # Workaround for MAC OS file picker not gaining focus
     elif platform.system() == 'Darwin':
         subprocess.run(['/usr/bin/osascript', '-e',
-        'tell app "Finder" to set frontmost of process "python" to true'])
+        'tell app "Finder" to set frontmost of process "python" to true'], capture_output=True)
         root.update()
         spm12_path = filedialog.askopenfilename(
             title='Select SPM12 ("run_spm12.sh")')
@@ -249,9 +249,9 @@ def run_siscom(param_dict):
         if platform.system() == 'Windows':
             os.startfile(siscom_dir)
         elif platform.system() == 'Darwin':
-            subprocess.run(['open', siscom_dir])
+            subprocess.run(['open', siscom_dir], capture_output=True)
         else:
-            subprocess.run(['xdg-open', siscom_dir])
+            subprocess.run(['xdg-open', siscom_dir], capture_output=True)
 
 
 def start_gui():
