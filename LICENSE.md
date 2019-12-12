@@ -2,21 +2,21 @@ Author: Jeremy Moreau
 Copyright © 2019, McGill University
 
 License Information
-====================================
+===================
 
-mnisiscom is distributed under the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with your software, You can obtain one at https://mozilla.org/MPL/2.0/.
+MNI SISCOM is distributed under the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with your software, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-mnisiscom is also distributed under the terms of the following Healthcare Disclaimer.
+MNI SISCOM is also distributed under the terms of the following Healthcare Disclaimer.
 
 Healthcare Disclaimer
------------------------------
+---------------------
 In Canada, the United States, or any other jurisdictions where they may apply, the following additional disclaimer of warranty and limitation of liability are hereby incorporated into the terms and conditions of MPL 2.0:
 
 No warranties of any kind whatsoever are made as to the results that You will obtain from relying upon the covered code (or any information or content obtained by way of the covered code), including but not limited to compliance with privacy laws or regulations or clinical care industry standards and protocols. Use of the covered code is not a substitute for a health care provider’s standard practice or professional judgment. Any decision with regard to the appropriateness of treatment, or the validity or reliability of information or content made available by the covered code, is the sole responsibility of the health care provider. Consequently, it is incumbent upon each health care provider to verify all medical history and treatment plans with each patient.
 
 Under no circumstances and under no legal theory, whether tort (including negligence), contract, or otherwise, shall any Contributor, or anyone who distributes Covered Software as permitted by the license, be liable to You for any indirect, special, incidental, consequential damages of any character including, without limitation, damages for loss of goodwill, work stoppage, computer failure or malfunction, or any and all other damages or losses, of any nature whatsoever (direct or otherwise) on account of or associated with the use or inability to use the covered content (including, without limitation, the use of information or content made available by the covered code, all documentation associated therewith, and the failure of the covered code to comply with privacy laws and regulations or clinical care industry standards and protocols), even if such party shall have been informed of the possibility of such damages.
 
-License Information by [OpenMRS] (https://openmrs.org/license) / [CC BY 4.0] (https://creativecommons.org/licenses/by/4.0/)
+License Information by [OpenMRS](https://openmrs.org/license) / [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 
 
 OpenSans-Regular.ttf
@@ -28,6 +28,29 @@ MNI152_T1.nii
 =============
 Copyright (C) 1993–2009 Louis Collins, McConnell Brain Imaging Centre, Montreal Neurological Institute, McGill University. Permission to use, copy, modify, and distribute this software and its documentation for any purpose and without fee is hereby granted, provided that the above copyright notice appear in all copies. The authors and McGill University make no representations about the suitability of this software for any purpose. It is provided “as is” without express or implied warranty. The authors are not responsible for any data loss, equipment damage, property loss, or injury to subjects or patients resulting from the use or misuse of this software package.
 http://nist.mni.mcgill.ca/?page_id=714
+
+
+Other licenses
+==============
+- [click](https://github.com/pallets/click) - [BSD-3-Clause](https://github.com/pallets/click/blob/master/LICENSE.rst)
+- [colorama](https://github.com/tartley/colorama) - [BSD 3-Clause](https://github.com/tartley/colorama/blob/master/LICENSE.txt)
+- [dipy](https://github.com/nipy/dipy) - [BSD 3-Clause](https://github.com/nipy/dipy/blob/master/LICENSE)
+- [eel](https://github.com/samuelhwilliams/Eel) - [MIT License](https://github.com/samuelhwilliams/Eel/blob/master/LICENSE)
+- [nibabel](https://github.com/nipy/nibabel) - [MIT License](https://github.com/nipy/nibabel/blob/master/COPYING)
+- [numpy](https://github.com/numpy/numpy) - [BSD 3-Clause](https://github.com/numpy/numpy/blob/master/LICENSE.txt)
+- [nilearn](https://github.com/nilearn/nilearn) - [New BSD License](https://github.com/nilearn/nilearn/blob/master/LICENSE)
+- [matplotlib](https://github.com/matplotlib/matplotlib) - [Matplotlib License](https://github.com/matplotlib/matplotlib/blob/master/LICENSE/LICENSE)
+- [Pillow](https://github.com/python-pillow/Pillow) - [PIL Software License](https://github.com/python-pillow/Pillow/blob/master/LICENSE)
+- [scikit-learn](https://github.com/scikit-learn/scikit-learn) - [New BSD License](https://github.com/scikit-learn/scikit-learn/blob/master/COPYING)
+- [argon](https://github.com/creativetimofficial/argon-design-system) - [MIT License](https://github.com/creativetimofficial/argon-design-system/blob/master/LICENSE.md)
+- [bootstrap](https://github.com/twbs/bootstrap) - [MIT License](https://github.com/twbs/bootstrap/blob/master/LICENSE)
+- [fontawesome](https://github.com/FortAwesome/Font-Awesome) - [Font Awesome Free License](https://github.com/FortAwesome/Font-Awesome/blob/master/LICENSE.txt)
+- [jquery](https://github.com/jquery/jquery) - [MIT License](https://github.com/jquery/jquery/blob/master/LICENSE.txt) 
+- [noUiSlider](https://github.com/leongersen/noUiSlider) - [MIT License](https://github.com/leongersen/noUiSlider/blob/master/LICENSE.md)
+- [Popper.js](https://github.com/popperjs/popper.js) - [MIT License](https://github.com/popperjs/popper.js/blob/master/LICENSE.md)
+
+
+
 
 
 Mozilla Public License Version 2.0
