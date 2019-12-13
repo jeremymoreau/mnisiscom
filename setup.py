@@ -33,7 +33,7 @@ setup(name='mnisiscom',
       packages=['mnisiscom'],
       entry_points={
           'console_scripts': ['mnisiscom=mnisiscom.command_line:run_siscom',
-                              'mnisiscom_gui=mnisiscom.gui:start_gui'],
+                              'mnisiscom_gui=mnisiscom.mnisiscom:start_gui'],
       },
       include_package_data=True,
       python_requires='>=3.5, <3.8',

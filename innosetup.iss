@@ -4,7 +4,7 @@
 #define MyAppName "MNI SISCOM"
 #define MyAppVersion "0.4.0"
 #define MyAppURL "https://github.com/jeremymoreau/mnisiscom"
-#define MyAppExeName "gui.exe"
+#define MyAppExeName "mnisiscom.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -36,8 +36,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\jerem\code\github\mnisiscom\dist\gui\gui.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\jerem\code\github\mnisiscom\dist\gui\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\Users\jerem\code\github\mnisiscom\dist\mnisiscom\mnisiscom.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\jerem\code\github\mnisiscom\dist\mnisiscom\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
