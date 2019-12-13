@@ -3,7 +3,7 @@
 del dist\*.*
 python setup.py sdist bdist_wheel
 pip install --upgrade --force-reinstall --no-deps (Get-ChildItem .\dist\mnisiscom-*.whl | Select-Object -Expand FullName)
-python -m eel .\mnisiscom\gui.py .\mnisiscom\gui --paths .\mnisiscom\ --onefile --noconsole `
+python -m eel .\mnisiscom\gui.py .\mnisiscom\gui --paths .\mnisiscom\ --noconsole `
 --add-data ".\mnisiscom\MNI152_T1.nii;mnisiscom" --add-data ".\mnisiscom\OpenSans-Regular.ttf;mnisiscom" `
 --add-data "$env:CONDA_PREFIX\Lib\site-packages\nilearn\plotting\glass_brain_files;nilearn\plotting\glass_brain_files" `
 --hidden-import="sklearn.metrics.pairwise_fast" --hidden-import="sklearn.utils._cython_blas" `
