@@ -21,9 +21,10 @@ import warnings
 with warnings.catch_warnings():  # ignore joblib DeprecationWarning caused by importing nilearn
     # TODO: Remove this when nilearn is updated
     warnings.filterwarnings("ignore", category=DeprecationWarning)
+    warnings.filterwarnings("ignore", category=FutureWarning)
     import sklearn
-from sklearn.neighbors.ball_tree import NeighborsHeap  # Only to prevent errors with PyInstaller
-from sklearn.neighbors import quad_tree  # Only to prevent errors with PyInstaller
+    from sklearn.neighbors.ball_tree import NeighborsHeap  # Only to prevent errors with PyInstaller
+    from sklearn.neighbors import quad_tree  # Only to prevent errors with PyInstaller
 import nilearn
 from nilearn import masking
 from nilearn import plotting

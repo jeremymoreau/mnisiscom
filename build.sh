@@ -1,10 +1,13 @@
 #!/bin/bash
 # mnisiscom GUI Mac/Linux build script for pip and PyInstaller
 # To be run in conda env with minimum dependencies installed
-# Delete all files in dist folder
+
+# Delete all files in dist and build folders
 rm -r dist/*
+rm -r build/*
 
 # Build python wheel
+python setup.py clean --all
 python setup.py sdist bdist_wheel
 
 # Re-install mnisiscom in env
