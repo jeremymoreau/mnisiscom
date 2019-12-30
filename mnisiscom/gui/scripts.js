@@ -4,26 +4,63 @@ $(document).ready(function() {
     $("#mcr-input-group").show();
   }
 
-  // Call into Python to load settings file (if it exists)
+  // Call into Python to save settings
+  async function save_settings(settings_str) {
+    eel.save_settings(settings_str)();
+  };
+
+  // Call into Python to load settings file and display agreement modal if needed
   async function load_settings() {
-    var mnisiscom_settings = await eel.load_settings()();
-    if (mnisiscom_settings) {
-      var spm12_path = mnisiscom_settings[0];
-      var mcr_path = mnisiscom_settings[1];
-      $("#spm-path-input").val(spm12_path);
-      $("#mcr-path-input").val(mcr_path);
-    }
-  }
+    var mnisiscom_settings_str = await eel.load_settings()();
+    if (mnisiscom_settings_str) {
+      var settings = JSON.parse(mnisiscom_settings_str)
+
+      // Set path values in GUI
+      $("#spm-path-input").val(settings.spm12_path);
+      $("#mcr-path-input").val(settings.mcr_path);
+    };
+    // Display license modal if not yet agreed to
+    if (settings.agreed_to_license !== "yes") {
+      // Show license modal
+      $("#license-modal").modal(
+        {
+          backdrop: "static",
+          keyboard: false
+        },
+        "show"
+      );
+
+      // Enable Ok button when agreement checkbox is checked
+      $("#license-check").change(function () {
+        if (this.checked) {
+          $("#license-btn").prop('disabled', false);
+        } else {
+          $("#license-btn").prop('disabled', true);
+        }
+      });
+
+      // Save agreement when ok is clicked
+      $("#license-btn").click(function () {
+        settings.agreed_to_license = "yes"
+        save_settings(JSON.stringify(settings))
+      });
+    };
+  };
   load_settings();
 
-  // Call into Python to save settings
-  async function save_settings(spm12_path, mcr_path) {
-    eel.save_settings(spm12_path, mcr_path)();
-  }
+  // Call into Python to load settings file and return settings object 
+  async function return_settings() {
+    var mnisiscom_settings_str = await eel.load_settings()();
+    return JSON.parse(mnisiscom_settings_str)
+  };
+
+  // When save-settings btn is pressed, load settings then save updated settings
   $("#save-settings").click(function() {
-    var spm12_path = $("#spm-path-input").val();
-    var mcr_path = $("#mcr-path-input").val();
-    save_settings(spm12_path, mcr_path);
+    return_settings().then((settings = {}) => {
+      settings.mcr_path = $("#mcr-path-input").val();
+      settings.spm12_path = $("#spm-path-input").val();
+      save_settings(JSON.stringify(settings))
+    });
   });
 
   // Call into Python to get dir selector

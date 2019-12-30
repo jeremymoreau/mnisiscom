@@ -1,4 +1,3 @@
-import json
 import os
 import platform
 import random
@@ -104,9 +103,7 @@ def get_spm_bin():
 
 
 @eel.expose
-def save_settings(spm12_path, mcr_path):
-    settings = {'spm12_path': spm12_path, 'mcr_path': mcr_path}
-
+def save_settings(settings_str):
     home_dir = str(Path.home())
     settings_dir = os.path.join(home_dir, '.mnisiscom')
 
@@ -116,7 +113,7 @@ def save_settings(spm12_path, mcr_path):
     settings_file = os.path.join(home_dir, '.mnisiscom', 'settings.json')
 
     with open(settings_file, 'w') as f:
-        json.dump(settings, f)
+        f.write(settings_str)
 
 
 @eel.expose
@@ -126,13 +123,8 @@ def load_settings():
 
     if os.path.isfile(settings_file):
         with open(settings_file, 'r') as f:
-            settings = json.load(f)
-        if 'spm12_path' in settings and 'mcr_path' in settings:
-            spm12_path = settings['spm12_path']
-            mcr_path = settings['mcr_path']
-            return (spm12_path, mcr_path)
-        else:
-            return ''
+            settings = f.read()
+        return(settings)
     else:
         return ''
 
@@ -270,5 +262,6 @@ if __name__ == '__main__':
         eel.init(join('mnisiscom', 'gui'))
     else:
         # Path if started as script
-        eel.init('gui')
+        cwd = os.path.dirname(os.path.abspath(__file__))
+        eel.init(join(cwd, 'gui'))
     eel.start('main.html', mode='chrome', size=(1000, 700), port=0)

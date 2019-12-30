@@ -14,6 +14,24 @@
   display: none;
 }
 
+#license-modal-body {
+  height: 300px;
+  overflow-y: scroll;
+  color: #32325d;
+}
+
+#license-modal-body h1{
+  font-size: 1.5rem;
+}
+
+#license-modal-body h2{
+  font-size: 1.3rem;
+}
+
+#license-modal-body h3{
+  font-size: 1rem;
+}
+
 .card-header {
   padding-top: 10px;
   padding-bottom: 10px;
