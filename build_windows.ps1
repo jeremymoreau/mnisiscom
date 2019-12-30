@@ -15,6 +15,7 @@ pip install --upgrade --force-reinstall --no-deps (Get-ChildItem .\dist\mnisisco
 # PyInstaller build
 python -m eel .\mnisiscom\mnisiscom.py .\mnisiscom\gui --paths .\mnisiscom\ --noconsole `
 --add-data ".\mnisiscom\MNI152_T1.nii;mnisiscom" --add-data ".\mnisiscom\OpenSans-Regular.ttf;mnisiscom" `
+--add-data ".\LICENSE.md;mnisiscom" `
 --add-data "$env:CONDA_PREFIX\Lib\site-packages\nilearn\plotting\glass_brain_files;nilearn\plotting\glass_brain_files" `
 --hidden-import="sklearn.metrics.pairwise_fast" --hidden-import="sklearn.utils._cython_blas" `
 --hidden-import="sklearn.neighbors.ball_tree" --hidden-import="sklearn.neighbors.typedefs" `

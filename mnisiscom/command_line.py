@@ -13,9 +13,14 @@ import siscom
 importlib.reload(siscom)
 
 
-def save_settings(spm12_path, mcr_path):
-    settings = {'spm12_path': spm12_path, 'mcr_path': mcr_path}
+def save_settings(settings_dict):
+    """Save settings dict to json file in home folder
 
+    Settings will be saved in ~/.mnisiscom/settings.json 
+    
+    Args:
+        settings_dict (dict): A dictionary of settings to save.
+    """
     home_dir = str(Path.home())
     settings_dir = os.path.join(home_dir, '.mnisiscom')
 
@@ -25,24 +30,27 @@ def save_settings(spm12_path, mcr_path):
     settings_file = os.path.join(home_dir, '.mnisiscom', 'settings.json')
 
     with open(settings_file, 'w') as f:
-        json.dump(settings, f)
+        json.dump(settings_dict, f)
 
 
 def load_settings():
+    """Load seetings json file into a dict
+    
+    Settings will be loaded from ~/.mnisiscom/settings.json
+
+    Returns:
+        dict: A dictionary of settings for MNI SISCOM Returns an empty dict
+              if no settings file exists.
+    """
     home_dir = str(Path.home())
     settings_file = os.path.join(home_dir, '.mnisiscom', 'settings.json')
 
     if os.path.isfile(settings_file):
         with open(settings_file, 'r') as f:
             settings = json.load(f)
-        if 'spm12_path' in settings and 'mcr_path' in settings:
-            spm12_path = settings['spm12_path']
-            mcr_path = settings['mcr_path']
-            return (spm12_path, mcr_path)
-        else:
-            return ''
+        return settings
     else:
-        return ''
+        return {}
 
 
 @click.command()
@@ -97,27 +105,57 @@ def run_siscom(t1, interictal, ictal, out, siscom_threshold, mask_threshold,
     """
     init()  # start colorama
 
-    # Prompt for SPM12 standalone and MCR installation path if not already in settings
+    ## Prompt for settings if not yet saved
     settings = load_settings()
-    if settings == '':
+    # Get user agreement
+    if settings.get('agreed_to_license') == None or settings.get('agreed_to_license') == '':
+        # load license file
+        if getattr(sys, 'frozen', False):
+            # Path for PyInstaller
+            license_path = os.path.join(sys._MEIPASS, 'mnisiscom', 'LICENSE.md')
+        else:
+            license_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir, 'LICENSE.md')
+        # load licese text from file
+        with open(license_path, 'r', encoding="utf8") as f:
+            license_text = f.read()
+        # prompt for acceptance
+        accept = click.confirm(license_text + '\n I accept the agreement')
+        if accept:
+            settings['agreed_to_license'] = 'yes'
+        else:
+            print('You must agree to the license in order to use MNI SISCOM.')
+            sys.exit(0)
+
+    # Get SPM12 path
+    if settings.get('spm12_path') == None or settings.get('spm12_path') == '':
         if platform.system() == 'Windows':
             spm12_path = click.prompt(
-                '\nEnter the SPM12 standalone installation path (e.g. C:\\path\\to\\spm12_win64.exe)', type=click.Path(exists=True))
-            mcr_path = ''
+                '\nEnter the SPM12 standalone installation path (e.g. C:\\path\\to\\spm12_win64.exe)',
+                type=click.Path(exists=True))
         else:
             spm12_path = click.prompt(
-                '\nEnter the SPM12 standalone installation path (e.g. /path/to/run_spm12.sh)', type=click.Path(exists=True))
+                '\nEnter the SPM12 standalone installation path (e.g. /path/to/run_spm12.sh)',
+                type=click.Path(exists=True))
+        settings['spm12_path'] = spm12_path
+    else:
+        spm12_path = settings['spm12_path']
+
+    # Get MCR path (on Mac/Linux)
+    if platform.system() != 'Windows':
+        if settings.get('mcr_path') == None or settings.get('mcr_path') == '':
             mcr_path_message = '\nEnter the MATLAB Compiler Runtime installation path. The selected folder name should ' \
                                '\nstart with "v" (e.g. /path/to/v95) and contain a subfolder called "mcr"'
             mcr_path = click.prompt(
                 mcr_path_message, type=click.Path(exists=True))
-
-        # Save settings
-        save_settings(spm12_path, mcr_path)
-
+            settings['mcr_path'] = mcr_path
+        else:
+            mcr_path = settings['mcr_path']
     else:
-        spm12_path = settings[0]
-        mcr_path = settings[1]
+        mcr_path = ''
+
+    # Save settings
+    save_settings(settings)
+
 
     # Create output directory
     siscom_dir = siscom.create_output_dir(out)
