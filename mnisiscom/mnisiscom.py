@@ -222,9 +222,6 @@ def run_siscom(param_dict):
         siscom.make_glass_brain(
             t1_nii, siscom_z, siscom_dir, spm12_path, mcr_path)
 
-    print(Fore.GREEN + 'Done!')
-    print(Style.RESET_ALL)
-
     # Clean output dir
     eel.update_progress_bar('Cleaning up...', 90)
     print(Fore.GREEN + 'Cleaning up result files... (~30s)')
@@ -235,6 +232,8 @@ def run_siscom(param_dict):
     # Show done message in GUI
     eel.update_progress_bar('Done!', 100)
     eel.show_done_message()
+    print(Fore.GREEN + 'Done!')
+    print(Style.RESET_ALL)
 
     # Open results folder (Check that dir exists before calling subprocess)
     if os.path.isdir(siscom_dir):
