@@ -537,6 +537,13 @@ def make_mri_panel(t1_nii, interictal_std_nii, ictal_std_nii, siscom_nii, mask_n
     width = first_image.width
     height = first_image.height
 
+    # Get font path
+    if getattr(sys, 'frozen', False):
+        # Path for PyInstaller
+        font_path = join(sys._MEIPASS, 'mnisiscom', 'OpenSans-Regular.ttf')
+    else:
+        font_path = join(os.path.dirname(os.path.realpath(__file__)), 'OpenSans-Regular.ttf')
+
     # Check if panel type is valid
     if panel_type not in ['all', 'mri_panel', 'mri_slide']:
         raise ValueError(
@@ -558,26 +565,29 @@ def make_mri_panel(t1_nii, interictal_std_nii, ictal_std_nii, siscom_nii, mask_n
         new_img_path = os.path.join(
             results_dir, 'SISCOM-' + slice_orientation + '_mri_panel.png')
         new_img.save(new_img_path)
+        new_img.close()
 
-        # Add labels to MRI panel
+        ## Add labels to MRI panel
         labels = ['Interictal', 'Ictal', 'SISCOM']
         img = Image.open(new_img_path)
         img = ImageOps.expand(img, border=30)
         panel_width, panel_height = img.size
         draw = ImageDraw.Draw(img)
 
-        if getattr(sys, 'frozen', False):
-            # Path for PyInstaller
-            font_path = join(sys._MEIPASS, 'mnisiscom', 'OpenSans-Regular.ttf')
-        else:
-            font_path = join(os.path.dirname(os.path.realpath(__file__)), 'OpenSans-Regular.ttf')
-
+        # Load font
         font = ImageFont.truetype(font_path, panel_width//30)
 
-        mult = panel_width / len(labels)
+        # Draw labels
+        uw = panel_width/100
+        mult = panel_width / len(labels)  # i.e. panel width / 3
         for i, label in enumerate(labels):
-            draw.text((i*mult, 10), label, (255, 255, 255), font=font)
+            draw.text((i*mult + 2*uw, 3*uw), label, (255, 255, 255), font=font)
+        # L/R labels (if ax or cor slices)
+        if slice_orientation == 'ax' or slice_orientation == 'cor':
+            draw.text((2*uw, 20*uw), 'R', (255, 255, 255), font=font)
+            draw.text((panel_width - panel_width//30 - 2*uw, 20*uw), 'L', (255, 255, 255), font=font)
         img.save(new_img_path)
+        img.close()
 
     # Assemble MRI slide
     if panel_type == 'all' or panel_type == 'mri_slide':
@@ -605,8 +615,27 @@ def make_mri_panel(t1_nii, interictal_std_nii, ictal_std_nii, siscom_nii, mask_n
                 col_i += 1
                 if col_i % columns == 0:
                     col_i = 0
-            new_img.save(os.path.join(results_dir, dir_label.upper(
-            ) + '-' + slice_orientation + '_mri_slide.png'))
+            new_img_path = os.path.join(
+                results_dir, dir_label.upper() + '-' + slice_orientation + '_mri_slide.png')
+            new_img.save(new_img_path)
+            new_img.close()
+
+            ## Add L/R labels to MRI slide (only for ax or cor slides)
+            if slice_orientation == 'ax' or slice_orientation == 'cor':
+                img = Image.open(new_img_path)
+                img = ImageOps.expand(img, border=30)
+                panel_width, panel_height = img.size
+                draw = ImageDraw.Draw(img)
+
+                # Load font
+                font = ImageFont.truetype(font_path, panel_width//30)
+
+                # Draw L/R labels (radiological convention)
+                uw = panel_width/100
+                draw.text((2*uw, 2*uw), 'R', (255, 255, 255), font=font)
+                draw.text((panel_width - panel_width//30 - 2*uw, 2*uw), 'L', (255, 255, 255), font=font)
+                img.save(new_img_path)
+                img.close()
 
 
 def make_glass_brain(t1_nii, siscom_nii, out_dir, spm12_path, mcr_path):
