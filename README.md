@@ -1,5 +1,35 @@
-
 ## Installation
+### MNI SISCOM desktop app
+Download MNI SISCOM: **link**
+- Windows: Double click mnisiscom_setup.exe and follow the instructions.
+- Mac: Double click mnisiscom.dmg and move mnisiscom.app to your Applications folder
+    - If you get a notification that `"mnisiscom" can't be opened because it is from an unidentified developer`, right-click on the app and select `Open`, then click on the `Open` button.
+- Linux: Double click on mnisiscom.
+    - If this doesn't work, you may need to right-click mnisiscom -> select `Properties` -> then the `Permissions` tab, and check the `Allow executing file as program` box.
+
+> **Note 1:** You must also install [SPM12](https://www.fil.ion.ucl.ac.uk/spm/) standalone to use MNI SISCOM (SPM is used for SPECT/MRI image coregistration). See below for installation instructions for [Windows](####Windows), [Mac](####Mac-OS), and [Linux](####Linux). Once installed, set the installation path of SPM in the settings menu of MNI SISCOM.
+
+> **Note 2:** [Google Chrome](https://www.google.com/chrome/) or Chromium is also required to use the desktop app interface of MNI SISCOM.
+
+### MNI SISCOM command line tool & Python module
+If you would like to use the command-line version of mnisiscom or the Python module, you can also install MNI SISCOM from PyPi. If you do not have python 3 yet, the Anaconda Python distribution is recommended: https://www.anaconda.com/distribution/#download-section 
+
+To install mnisiscom simply run:
+`pip install mnisiscom`
+
+> **Note:** On Windows you may need to install Visual Studio C++. See this question for more information: https://stackoverflow.com/questions/29846087/microsoft-visual-c-14-0-is-required-unable-to-find-vcvarsall-bat
+
+#### Basic usage:
+
+`mnisiscom -t1 /path/to/T1.nii -ii /path/to/interictal_spect.nii -i /path/to/ictal_spect.nii -o /path/to/output/folder`
+
+You can also launch the Desktop GUI from the command line:
+`mnisiscom_gui`
+
+For usage information, enter:
+`mnisiscom --help`
+
+
 ### SPM12
 The standalone version of [SPM12](https://www.fil.ion.ucl.ac.uk/spm/) is required for MNI SISCOM to run (it is used for SPECT and MRI image coregistration). For a more complete installation guide, see the SPM website: https://en.wikibooks.org/wiki/SPM/Standalone
 
@@ -49,27 +79,4 @@ https://www.fil.ion.ucl.ac.uk/spm/download/restricted/utopia/
     - Then enter `./run_spm12.sh /usr/local/MATLAB/MATLAB_Compiler_Runtime/v713/`. Note: you may need to change `/usr/local/MATLAB/MATLAB_Compiler_Runtime/v713/` if you installed the MATLAB Compiler Runtime in a different location in step 1.
 
 
-### MNI SISCOM
-Download MNI SISCOM: **link**
-- Windows: Double click mnisiscom_setup.exe and follow the instructions.
-- Mac: Double click mnisiscom.dmg and move mnisiscom.app to your Applications folder
-    - If you get a notification that `"mnisiscom" can't be opened because it is from an unidentified developer`, right-click on the app and select `Open`, then click on the `Open` button.
-- Linux: Double click on mnisiscom.
-    - If this doesn't work, you may need to right-click mnisiscom -> select `Properties` -> then the `Permissions` tab, and check the `Allow executing file as program` box.
 
-### MNI SISCOM Command line tool & Python module
-If you would like to use the command-line version of mnisiscom or the Python module, you can also install MNI SISCOM from PyPi. If you do not have python 3 yet, the Anaconda Python distribution is recommended: https://www.anaconda.com/distribution/#download-section 
-
-To install mnisiscom simply run:
-`pip install mnisiscom`
-
-You can then run the command line tool via a terminal:
-`mnisiscom`
-
-or open the Destop GUI:
-`mnisiscom_gui`
-
-For usage information, enter:
-`mnisiscom --help`
-
-Note: On Windows you may need to install Visual Studio C++. See this question for more information: https://stackoverflow.com/questions/29846087/microsoft-visual-c-14-0-is-required-unable-to-find-vcvarsall-bat
