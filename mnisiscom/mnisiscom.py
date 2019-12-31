@@ -235,14 +235,19 @@ def run_siscom(param_dict):
     print(Fore.GREEN + 'Done!')
     print(Style.RESET_ALL)
 
-    # Open results folder (Check that dir exists before calling subprocess)
+    # Try opening the results folder (Check that dir exists before calling subprocess)
     if os.path.isdir(siscom_dir):
         if platform.system() == 'Windows':
-            os.startfile(siscom_dir)
+            try:
+                os.startfile(siscom_dir)
+            except OSError:
+                pass
         elif platform.system() == 'Darwin':
-            subprocess.run(['open', siscom_dir], capture_output=True)
+            subprocess.Popen(['open', siscom_dir],
+            stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
         else:
-            subprocess.run(['xdg-open', siscom_dir], capture_output=True)
+            subprocess.Popen(['xdg-open', siscom_dir],
+            stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 
 
 def start_gui():
