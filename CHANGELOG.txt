@@ -12,9 +12,11 @@
 
 0.4.0
 - Added GUI
+- Added packaged binaries with PyInstaller
+- Added Windows installer
+- Added Mac dmg installer
+- Added documentation and installation instructions
 - Removed nipype dependency (replaced with direct call to SPM12 standalone)
 - Cleaned up file output
 - Fixed coronal slice cropping bug
 - Refactoring
-- Improved packaging
-- Added documentation and installation instructions

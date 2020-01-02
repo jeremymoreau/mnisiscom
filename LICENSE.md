@@ -1,5 +1,5 @@
 Author: Jeremy Moreau
-Copyright © 2019, McGill University
+Copyright © 2020, McGill University
 
 License Information
 ===================

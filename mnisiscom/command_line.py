@@ -14,7 +14,7 @@ importlib.reload(siscom)
 
 license_text = """
 Author: Jeremy Moreau
-Copyright © 2019, McGill University
+Copyright © 2020, McGill University
 
 License Information
 ===================
@@ -372,7 +372,7 @@ def run_siscom(t1, interictal, ictal, out, siscom_threshold, mask_threshold,
     Command line tool for computing subtraction ictal SPECT coregistered to MRI (SISCOM).\n
     For research use only!\n\n
     Author: Jeremy Moreau (jeremy.moreau@mail.mcgill.ca)\n
-    Version: 0.3.1 (2019-07-14)
+    Version: 0.4.0 (2020-01-02)
     """
     init()  # start colorama
 
