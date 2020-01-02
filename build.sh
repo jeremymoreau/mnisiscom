@@ -22,3 +22,10 @@ python -m eel ./mnisiscom/mnisiscom.py ./mnisiscom/gui --paths ./mnisiscom/ --on
 --hidden-import="sklearn.neighbors.ball_tree" --hidden-import="sklearn.neighbors.typedefs" \
 --hidden-import="sklearn.neighbors.quad_tree" --hidden-import="sklearn.tree" \
 --hidden-import="sklearn.tree._utils" --icon ./icons/icon-gen/app.icns
+
+# Create zip/dmg
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo 'mac'
+else
+    zip -j dist/mniscom.zip  dist/mnisiscom README.md LICENSE.md
+fi
