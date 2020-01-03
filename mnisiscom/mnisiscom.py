@@ -65,7 +65,7 @@ def get_mcr_folder():
 
     # Check if valid MCR folder is selected
     folder_content = os.listdir(folder_path)
-    if 'mcr' in folder_content:
+    if 'bin' in folder_content:
         return folder_path
     else:
         return 'Invalid MCR folder.'
