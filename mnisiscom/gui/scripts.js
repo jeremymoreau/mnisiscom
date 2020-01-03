@@ -18,6 +18,12 @@ $(document).ready(function() {
       // Set path values in GUI
       $("#spm-path-input").val(settings.spm12_path);
       $("#mcr-path-input").val(settings.mcr_path);
+    } else {
+      var settings = {
+        agreed_to_license: "no",
+        mcr_path: "",
+        spm12_path: ""
+      };
     };
     // Display license modal if not yet agreed to
     if (settings.agreed_to_license !== "yes") {
