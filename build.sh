@@ -1,6 +1,8 @@
 #!/bin/bash
 # mnisiscom GUI Mac/Linux build script for pip and PyInstaller
 # To be run in conda env with minimum dependencies installed
+# Requires create-dmg (https://github.com/sindresorhus/create-dmg) for Mac build
+version="0.4.0"
 
 # Delete all files in dist and build folders
 rm -r dist/*
@@ -25,7 +27,12 @@ python -m eel ./mnisiscom/mnisiscom.py ./mnisiscom/gui --paths ./mnisiscom/ --on
 
 # Create zip/dmg
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    echo 'mac'
+    # Change version number in Info.plist
+    sed -i '' "s/0.0.0/$version/" dist/mnisiscom.app/Contents/Info.plist
+    # Rename app
+    mv dist/mnisiscom.app dist/MNI\ SISCOM.app
+    # Create dmg
+    create-dmg --overwrite dist/MNI\ SISCOM.app/ dist/
 else
     zip -j dist/mniscom.zip  dist/mnisiscom README.md LICENSE.md
 fi
