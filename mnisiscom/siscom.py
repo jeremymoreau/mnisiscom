@@ -2,6 +2,8 @@ from PIL import ImageOps
 from PIL import ImageDraw
 from PIL import ImageFont
 from PIL import Image
+import matplotlib
+matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 from dipy.align.reslice import reslice
 from os.path import join
