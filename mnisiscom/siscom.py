@@ -194,7 +194,13 @@ def spm_coregister(target, sources, spm12_path, mcr_path):
         else:
             if os.path.isfile(spm12_path) and os.path.isdir(mcr_path) and os.path.isfile(spm_batch_file):
                 command = [spm12_path, mcr_path, 'batch', spm_batch_file]
+        
+        # Change working dir to spm12_path before running command
+        # This fixes an issue caused by a relative path in the spm12.app bundle on Mac OS
+        cwd = os.getcwd()
+        os.chdir(os.path.dirname(spm12_path))
         run_cmd(command)
+        os.chdir(cwd)
 
         # remove SPM batch file
         os.remove(spm_batch_file)
@@ -268,7 +274,13 @@ def spm_normalise(source, apply_to, spm12_path, mcr_path):
     else:
         if os.path.isfile(spm12_path) and os.path.isdir(mcr_path) and os.path.isfile(spm_batch_file):
             command = [spm12_path, mcr_path, 'batch', spm_batch_file]
+    
+    # Change working dir to spm12_path before running command
+    # This fixes an issue caused by a relative path in the spm12.app bundle on Mac OS
+    cwd = os.getcwd()
+    os.chdir(os.path.dirname(spm12_path))
     run_cmd(command)
+    os.chdir(cwd)
 
     # remove SPM batch file
     os.remove(spm_batch_file)
