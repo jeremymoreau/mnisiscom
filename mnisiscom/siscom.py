@@ -73,6 +73,47 @@ def gzip_file(file_to_gzip):
 
     return gzipped_file
 
+            
+def unzip_mac(zipped_file):
+    """Un-zip a zipped file using Mac OS unzip command
+    
+    The Python zipfile module does not correctly extract aliases on Mac OS and
+    does not preserve permissions. This function just calls the unzip command.
+    
+    Parameters
+    ----------
+    zipped_file : str
+        Absolute path of a zipped file
+
+    Returns
+    -------
+    str
+        Absolute path of unzipped file
+    """
+    out_path = os.path.dirname(zipped_file)
+    command = ['unzip', zipped_file, '-d', out_path]
+    subprocess.run(command, stdout=subprocess.PIPE,
+                    stdin=subprocess.DEVNULL, stderr=subprocess.PIPE)
+    
+    return out_path
+
+
+def check_spm12app_mac(spm12_path):
+    """Unzip spm12_maci64.zip if not already unzipped (only on Mac OS)
+    
+    Parameters
+    ----------
+    spm12_path : str
+        Absolute path to run_spm12.sh
+    """
+    if platform.system() == 'Darwin':
+        spm12_dir = os.path.dirname(spm12_path)
+        spm12_app_dir = os.path.join(spm12_dir, 'spm12.app')
+        spm12_app_zip = os.path.join(spm12_dir, 'spm12_maci64.zip')
+        
+        if not os.path.exists(spm12_app_dir) and os.path.isfile(spm12_app_zip):
+            unzip_mac(spm12_app_zip)
+
 
 def reslice_iso(orig_img):
     """Reslice nifti image into isotropic 1x1x1 space
@@ -195,6 +236,9 @@ def spm_coregister(target, sources, spm12_path, mcr_path):
             if os.path.isfile(spm12_path) and os.path.isdir(mcr_path) and os.path.isfile(spm_batch_file):
                 command = [spm12_path, mcr_path, 'batch', spm_batch_file]
         
+        # Unzip spm12_maci64.zip on Mac OS if user forgets
+        check_spm12app_mac(spm12_path)
+        
         # Change working dir to spm12_path before running command
         # This fixes an issue caused by a relative path in the spm12.app bundle on Mac OS
         cwd = os.getcwd()
@@ -274,6 +318,9 @@ def spm_normalise(source, apply_to, spm12_path, mcr_path):
     else:
         if os.path.isfile(spm12_path) and os.path.isdir(mcr_path) and os.path.isfile(spm_batch_file):
             command = [spm12_path, mcr_path, 'batch', spm_batch_file]
+    
+    # Unzip spm12_maci64.zip on Mac OS if user forgets
+    check_spm12app_mac(spm12_path)
     
     # Change working dir to spm12_path before running command
     # This fixes an issue caused by a relative path in the spm12.app bundle on Mac OS
