@@ -16,88 +16,99 @@ import siscom
 
 @eel.expose
 def get_nii_file():
-    root = Tk()
-    root.withdraw()
-    root.wm_attributes('-topmost', 1)
-    # Workaround for MAC OS file picker not gaining focus
+    # Use AppleScript instead of Tk filedialog on Mac
+    # Tk filedialog is currently buggy on Mac OS
     if platform.system() == 'Darwin':
-        subprocess.run(['/usr/bin/osascript', '-e',
-        'tell app "Finder" to set frontmost of process "python" to true'], capture_output=True)
-    root.update()
-    file_path = filedialog.askopenfilename(
-        title="Select file", filetypes=[("NIfTI Files", "*.nii")], parent=root)
-    root.update()
-    root.destroy()
+        ascript = 'tell application "SystemUIServer" to return POSIX path of (choose file with prompt "Choose a NIfTI (.nii) file" of type {"nii"})'
+        raw_path = subprocess.run(['/usr/bin/osascript', '-e', ascript], capture_output=True)
+        file_path = raw_path.stdout.decode('utf-8').rstrip()
+    else:
+        root = Tk()
+        root.withdraw()
+        root.wm_attributes('-topmost', 1)
+        root.update()
+        file_path = filedialog.askopenfilename(
+            title="Select file", filetypes=[("NIfTI Files", "*.nii")], parent=root)
+        root.update()
+        root.destroy()
 
     return file_path
 
 
 @eel.expose
 def get_folder():
-    root = Tk()
-    root.withdraw()
-    root.wm_attributes('-topmost', 1)
-    # Workaround for MAC OS file picker not gaining focus
+    # Use AppleScript instead of Tk filedialog on Mac
+    # Tk filedialog is currently buggy on Mac OS
     if platform.system() == 'Darwin':
-        subprocess.run(['/usr/bin/osascript', '-e',
-        'tell app "Finder" to set frontmost of process "python" to true'], capture_output=True)
-    root.update()
-    folder_path = filedialog.askdirectory(parent=root)
-    root.update()
-    root.destroy()
+        ascript = 'tell application "SystemUIServer" to return POSIX path of (choose folder with prompt "Choose the output folder")'
+        raw_path = subprocess.run(['/usr/bin/osascript', '-e', ascript], capture_output=True)
+        folder_path = raw_path.stdout.decode('utf-8').rstrip()
+    else:
+        root = Tk()
+        root.withdraw()
+        root.wm_attributes('-topmost', 1)
+        root.update()
+        folder_path = filedialog.askdirectory(parent=root)
+        root.update()
+        root.destroy()
 
     return folder_path
 
 
 @eel.expose
 def get_mcr_folder():
-    root = Tk()
-    root.withdraw()
-    root.wm_attributes('-topmost', 1)
-    # Workaround for MAC OS file picker not gaining focus
+    # Use AppleScript instead of Tk filedialog on Mac
+    # Tk filedialog is currently buggy on Mac OS
     if platform.system() == 'Darwin':
-        subprocess.run(['/usr/bin/osascript', '-e',
-        'tell app "Finder" to set frontmost of process "python" to true'], capture_output=True)
-    root.update()
-    folder_path = filedialog.askdirectory()
-    root.update()
-    root.destroy()
+        ascript = 'tell application "SystemUIServer" to return POSIX path of (choose folder with prompt "Select the MCR folder")'
+        raw_path = subprocess.run(['/usr/bin/osascript', '-e', ascript], capture_output=True)
+        folder_path = raw_path.stdout.decode('utf-8').rstrip()
+    else:
+        root = Tk()
+        root.withdraw()
+        root.wm_attributes('-topmost', 1)
+        root.update()
+        folder_path = filedialog.askdirectory()
+        root.update()
+        root.destroy()
 
     # Check if valid MCR folder is selected
-    folder_content = os.listdir(folder_path)
-    if 'bin' in folder_content:
-        return folder_path
+    if os.path.isdir(folder_path):
+        folder_content = os.listdir(folder_path)
+        if 'bin' in folder_content:
+            return folder_path
+        else:
+            return 'Invalid MCR folder.'
     else:
         return 'Invalid MCR folder.'
 
 
 @eel.expose
 def get_spm_bin():
-    root = Tk()
-    root.withdraw()
-    root.wm_attributes('-topmost', 1)
-    spm12_path = ''
-    if platform.system() == 'Windows':
-        root.update()
-        spm12_path = filedialog.askopenfilename(title='Select SPM12 ("spm12_win64.exe")', filetypes=[
-                                                ("SPM12", "spm12_win64.exe")])
-        root.update()
-        root.destroy()
-    # Workaround for MAC OS file picker not gaining focus
-    elif platform.system() == 'Darwin':
-        subprocess.run(['/usr/bin/osascript', '-e',
-        'tell app "Finder" to set frontmost of process "python" to true'], capture_output=True)
-        root.update()
-        spm12_path = filedialog.askopenfilename(
-            title='Select SPM12 ("run_spm12.sh")')
-        root.update()
-        root.destroy()
+    # Use AppleScript instead of Tk filedialog on Mac
+    # Tk filedialog is currently buggy on Mac OS
+    if platform.system() == 'Darwin':
+        ascript = 'tell application "SystemUIServer" to return POSIX path of (choose file with prompt "Select SPM12 (run_spm12.sh)" of type {"sh"})'
+        raw_path = subprocess.run(['/usr/bin/osascript', '-e', ascript], capture_output=True)
+        spm12_path = raw_path.stdout.decode('utf-8').rstrip()
     else:
-        root.update()
-        spm12_path = filedialog.askopenfilename(
-            title='Select SPM12 ("run_spm12.sh")', filetypes=[("SPM12", "run_spm12.sh")])
-        root.update()
-        root.destroy()
+        root = Tk()
+        root.withdraw()
+        root.wm_attributes('-topmost', 1)
+        spm12_path = ''
+        if platform.system() == 'Windows':
+            root.update()
+            spm12_path = filedialog.askopenfilename(title='Select SPM12 ("spm12_win64.exe")', filetypes=[
+                                                    ("SPM12", "spm12_win64.exe")])
+            root.update()
+            root.destroy()
+        else:
+            # Linux
+            root.update()
+            spm12_path = filedialog.askopenfilename(
+                title='Select SPM12 ("run_spm12.sh")', filetypes=[("SPM12", "run_spm12.sh")])
+            root.update()
+            root.destroy()
 
     return spm12_path
 
