@@ -330,8 +330,13 @@ def spm_normalise(source, apply_to, spm12_path, mcr_path):
     run_cmd(command)
     os.chdir(cwd)
 
-    # remove SPM batch file
+    # Remove SPM batch file
     os.remove(spm_batch_file)
+    
+    # Remove SPM deformations files
+    deformations_file = os.path.splitext(source)[0] + '_sn.mat'
+    if os.path.isfile(deformations_file):
+        os.remove(deformations_file)
 
 
 def compute_siscom(interictal_nii, ictal_nii, out_dir, threshold=0.5, mask_cutoff=0.6):
