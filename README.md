@@ -23,7 +23,7 @@ You can also launch the Desktop GUI from the command line:
 
 ### MNI SISCOM desktop app
 
-Download MNI SISCOM: **link**
+Download MNI SISCOM: https://github.com/jeremymoreau/mnisiscom/releases
 
 - Windows: Double click mnisiscom_setup.exe and follow the instructions.
 - Mac: Double click mnisiscom.dmg and move mnisiscom.app to your Applications folder
