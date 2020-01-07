@@ -2,6 +2,7 @@
 # mnisiscom GUI Linux build script for pip and PyInstaller
 # To be run in virtualenv with minimum dependencies installed
 version="0.4.0"
+VIRTUAL_ENV="/export02/data/jeremy/bin/virtualenv/mnisiscom_distv"
 
 # Delete all files in dist and build folders
 rm -r dist/*
