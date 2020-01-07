@@ -6,7 +6,8 @@ import subprocess
 import sys
 from os.path import join
 from pathlib import Path
-from tkinter import Tk, filedialog
+if not platform.system() == 'Darwin':
+    from tkinter import Tk, filedialog
 
 import eel
 from colorama import Back, Fore, Style, deinit, init
@@ -274,7 +275,7 @@ def start_gui():
 if __name__ == '__main__':
     if getattr(sys, 'frozen', False):
         # Path for PyInstaller
-        eel.init(join('mnisiscom', 'gui'))
+        eel.init(join('mnisiscom_data', 'gui'))
     else:
         # Path if started as script
         cwd = os.path.dirname(os.path.abspath(__file__))

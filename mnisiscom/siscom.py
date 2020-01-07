@@ -2,6 +2,7 @@ from PIL import ImageOps
 from PIL import ImageDraw
 from PIL import ImageFont
 from PIL import Image
+from PIL import _imagingft
 import matplotlib
 matplotlib.use('Agg')
 from matplotlib import pyplot as plt
@@ -272,7 +273,7 @@ def spm_normalise(source, apply_to, spm12_path, mcr_path):
     """
     if getattr(sys, 'frozen', False):
         # Path for PyInstaller
-        mni152_path = join(sys._MEIPASS, 'mnisiscom', 'MNI152_T1.nii')
+        mni152_path = join(sys._MEIPASS, 'mnisiscom_data', 'MNI152_T1.nii')
     else:
         mni152_path = join(os.path.dirname(os.path.realpath(__file__)), 'MNI152_T1.nii')
 
@@ -601,7 +602,7 @@ def make_mri_panel(t1_nii, interictal_std_nii, ictal_std_nii, siscom_nii, mask_n
     # Get font path
     if getattr(sys, 'frozen', False):
         # Path for PyInstaller
-        font_path = join(sys._MEIPASS, 'mnisiscom', 'OpenSans-Regular.ttf')
+        font_path = join(sys._MEIPASS, 'mnisiscom_data', 'OpenSans-Regular.ttf')
     else:
         font_path = join(os.path.dirname(os.path.realpath(__file__)), 'OpenSans-Regular.ttf')
 
