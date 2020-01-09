@@ -1,12 +1,12 @@
 # MNI SISCOM
 
-<img src="icons/icon-gen/favicon-120.png?raw=true" align="left" height="110" width="110" hspace="10">
+<img src="https://raw.githubusercontent.com/jeremymoreau/mnisiscom/master/icons/icon-gen/favicon-120.png" align="left" height="110" width="110" hspace="10">
 
 MNI SISCOM is a Windows/Mac/Linux desktop and command line application for computing Subtraction ictal single-photon emission CT coregistered to MRI (SISCOM). The underlying Python library that implements the functionality of MNI SISCOM is also available on PyPi. Please cite the following paper if you use MNI SISCOM in a paper: [reference to come].
 
 ## Screenshots
 
-![meningioma.app](icons/mnisiscom_screenshot.png?raw=true)
+![meningioma.app](https://raw.githubusercontent.com/jeremymoreau/mnisiscom/master/icons/mnisiscom_screenshot.png)
 
 ## Usage
 
