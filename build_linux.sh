@@ -2,7 +2,7 @@
 # mnisiscom GUI Linux build script for pip and PyInstaller
 # To be run in virtualenv with minimum dependencies installed
 version="0.4.0"
-site_packages="/home/jmoreau/.local/lib/python3.6/site-packages"
+site_packages="/home/jmoreau/virtualenv/mnisiscom_dist/lib/python3.6/site-packages/"
 
 # Delete all files in dist and build folders
 rm -r dist/*
@@ -13,7 +13,7 @@ python3 setup.py clean --all
 python3 setup.py sdist bdist_wheel
 
 # Re-install mnisiscom in env
-pip install --upgrade --force-reinstall --no-deps dist/mnisiscom-*.whl
+pip3 install --upgrade --force-reinstall --no-deps dist/mnisiscom-*.whl
 
 # PyInstaller build
 pyinstaller ./mnisiscom/mnisiscom.py --paths ./mnisiscom/ \
