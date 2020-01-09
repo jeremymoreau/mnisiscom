@@ -31,7 +31,7 @@ Download MNI SISCOM: <https://github.com/jeremymoreau/mnisiscom/releases>
 - Linux: Double click on mnisiscom.
   - If this doesn't work, you may need to right-click mnisiscom -> select `Properties` -> then the `Permissions` tab, and check the `Allow executing file as program` box.
 
-> **Note 1:** You **must also install [SPM12](https://www.fil.ion.ucl.ac.uk/spm/) standalone** to use MNI SISCOM (SPM is used for SPECT/MRI image coregistration). See below for installation instructions for [Windows](###Windows), [Mac](###Mac-OS), and [Linux](###Linux). Once installed, set the installation path of SPM in the settings menu of MNI SISCOM.
+> **Note 1:** You **must also install [SPM12](https://www.fil.ion.ucl.ac.uk/spm/) standalone** to use MNI SISCOM (SPM is used for SPECT/MRI image coregistration). See below for installation instructions for [Windows](#Windows), [Mac](#Mac-OS), and [Linux](#Linux). Once installed, set the installation path of SPM in the settings menu of MNI SISCOM.
 
 > **Note 2:** **[Google Chrome](https://www.google.com/chrome/) or Chromium is also required** to use the desktop app interface of MNI SISCOM.
 
