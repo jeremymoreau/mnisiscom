@@ -10,7 +10,7 @@ MNI SISCOM is a Windows/Mac/Linux desktop and command line application for compu
 
 ## Usage
 
-Input MRI and SPECT volumes in NIfTI (.nii) format are supported. If you have raw DICOM images you can use a tool like dcm2nii (now available with [MRIcroGL](https://www.nitrc.org/projects/mricrogl/)) to convert them to NIfTI format. Details about each parameter can be viewed by hovering over the label in the desktop app or via `mnisiscom --help` for the command line tool. Resulting images will be saved in the selected output folder.
+Input MRI and SPECT volumes in NIfTI (.nii) format are supported. If you have raw DICOM images you can use a tool like dcm2nii (now available with [MRIcron](https://www.nitrc.org/projects/mricron), in the "Import" menu) to convert them to NIfTI format. Details about each parameter can be viewed by hovering over the label in the desktop app or via `mnisiscom --help` for the command line tool. Resulting images will be saved in the selected output folder.
 
 ### Basic command line tool usage:
 
