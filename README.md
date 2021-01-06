@@ -65,20 +65,8 @@ The standalone version of [SPM12](https://www.fil.ion.ucl.ac.uk/spm/) is require
 
 ### Mac OS
 
-1. Download and install the MATLAB Compiler Runtime (MCR) for SPM (`MCRInstaller.dmg`)
-<https://www.fil.ion.ucl.ac.uk/spm/download/restricted/utopia/MCR/maci64/>
+Follow the instructions in this step-by-step installation guide: <https://github.com/jeremymoreau/mnisiscom/blob/master/doc/mnisiscom_installation_manual_macOS.pdf>
 
-2. Download the current version of SPM12 standalone (e.g. `spm12_r7487.zip`)
-<https://www.fil.ion.ucl.ac.uk/spm/download/restricted/utopia/>
-
-3. Unzip the downloaded file and move the `spm12` folder to where you would like to save it (e.g. in `/Users/YourUsername/spm12`)
-
-4. Unzip the `spm12_maci64.zip` file in the `spm12` folder
-
-5. Start SPM12 to verify that it is properly installed (SPM12 will also need to unpack some files the first time it is run). Reboot your computer first if you run into any errors.
-    - In your Applications folder go to `/Applications/Utilities` and open the Terminal app
-    - Type in `cd /path/to/where/you/put/the/spm12/folder` (e.g. `cd /Users/YourUsername/spm12`)
-    - Then enter `./run_spm12.sh /Applications/MATLAB/MATLAB_Compiler_Runtime/v713/`. Note: you may need to change `/Applications/MATLAB/MATLAB_Compiler_Runtime/v713/` if you installed the MATLAB Compiler Runtime in a different location in step 1.
 
 ### Linux
 
