@@ -6,7 +6,7 @@ colorama==0.4.3
 cycler==0.10.0
 dipy==1.0.0
 Eel==0.12.2
-future==0.18.2
+future==0.18.3
 gevent==1.4.0
 gevent-websocket==0.10.1
 greenlet==0.4.15
